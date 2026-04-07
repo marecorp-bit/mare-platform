@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MARE 統合管理ダッシュボード</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script>
+  // ══ Supabase設定（ここを書き換えてください）
+window.SUPABASE_URL     = 'https://krozenkyjdicvmwqhufd.supabase.co';
+window.SUPABASE_ANON    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3plbmt5amRpY3Ztd3FodWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyOTIxMjUsImV4cCI6MjA5MDg2ODEyNX0.ZNPNpZNxLjndt5LMpMmnwznmTbhZVYHREzBlQ3shpiE';
+window.SUPABASE_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3plbmt5amRpY3Ztd3FodWZkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTI5MjEyNSwiZXhwIjoyMDkwODY4MTI1fQ.dXajaPbCzGHxl3maxaGNIJW67pSVV0hZsAN5eZk5hBc';
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0e1520;--bg2:#131c2b;--bg3:#1a2840;
+  --acc:#e8a020;--acc2:#f0c060;--adim:rgba(232,160,32,.12);
+  --cyan:#4ab8d4;--grn:#27ae72;--red:#e05555;--pur:#534ab7;
+  --wh:#fff;--gr:rgba(255,255,255,.55);--bd:rgba(255,255,255,.08);
+}
+body{font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:var(--wh);min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+button{cursor:pointer;font-family:"Noto Sans JP",sans-serif;}
+
+/* ── LOGIN ── */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--bg2);border:1px solid var(--bd);padding:36px 40px;width:360px;}
+.login-logo{font-family:"Space Mono",monospace;font-size:1.4rem;font-weight:700;letter-spacing:.18em;margin-bottom:2px;}
+.login-logo span{color:var(--acc);}
+.login-sub{font-family:"Space Mono",monospace;font-size:.52rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gr);margin-bottom:28px;}
+.f-lbl{font-size:.76rem;color:var(--gr);margin:12px 0 4px;}
+.f-inp{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--wh);padding:9px 12px;font-size:.86rem;font-family:inherit;outline:none;transition:border-color .2s;}
+.f-inp:focus{border-color:var(--acc);}
+.btn-login{width:100%;margin-top:20px;padding:11px;background:var(--acc);color:var(--bg);font-family:"Space Mono",monospace;font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;}
+.btn-login:hover{background:var(--acc2);}
+.login-err{background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.3);color:#e05555;padding:8px 12px;font-size:.78rem;margin-top:10px;display:none;}
+
+/* ── DASHBOARD ── */
+#app{display:none;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:rgba(14,21,32,.97);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;}
+.logo{font-family:"Space Mono",monospace;font-size:.88rem;font-weight:700;letter-spacing:.18em;}
+.logo span{color:var(--acc);}
+.logo-sub{font-family:"Space Mono",monospace;font-size:.46rem;letter-spacing:.2em;color:var(--gr);text-transform:uppercase;margin-left:10px;}
+.nav-r{display:flex;align-items:center;gap:12px;}
+.biz-switch{display:flex;border:1px solid var(--bd);}
+.biz-btn{padding:5px 14px;font-family:"Space Mono",monospace;font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--gr);border:none;transition:all .2s;}
+.biz-btn.on{background:var(--acc);color:var(--bg);font-weight:700;}
+.btn-logout{padding:5px 12px;background:transparent;border:1px solid var(--bd);color:var(--gr);font-family:"Space Mono",monospace;font-size:.54rem;transition:all .2s;}
+.btn-logout:hover{color:var(--red);border-color:rgba(224,85,85,.3);}
+
+.main{max-width:1280px;margin:0 auto;padding:22px 28px;}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;}
+.stat{background:var(--bg2);border:1px solid var(--bd);padding:14px 16px;position:relative;}
+.stat-n{font-family:"Space Mono",monospace;font-size:1.6rem;font-weight:700;color:var(--acc);line-height:1;display:block;margin-bottom:2px;}
+.stat-l{font-size:.7rem;color:var(--gr);}
+.stat.alert{border-color:rgba(224,85,85,.3);background:rgba(224,85,85,.06);}
+.stat.alert .stat-n{color:#e05555;}
+
+/* ── PANEL ── */
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.panel{background:var(--bg2);border:1px solid var(--bd);padding:16px 18px;}
+.panel-ttl{font-family:"Space Mono",monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.panel-ttl::after{content:'';flex:1;height:1px;background:var(--bd);}
+
+/* ── TABS ── */
+.tab-bar{display:flex;border-bottom:1px solid var(--bd);margin-bottom:16px;}
+.tab{padding:8px 14px;font-family:"Space Mono",monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;gap:8px;margin-bottom:12px;align-items:center;}
+.srch{flex:1;background:var(--bg2);border:1px solid var(--bd);color:var(--wh);padding:7px 11px;font-size:.82rem;font-family:inherit;outline:none;}
+.srch:focus{border-color:var(--acc);}
+.sel{background:var(--bg2);border:1px solid var(--bd);color:var(--gr);padding:7px 10px;font-family:"Space Mono",monospace;font-size:.58rem;outline:none;}
+.btn-sm{padding:7px 12px;font-family:"Space Mono",monospace;font-size:.56rem;letter-spacing:.06em;border:1px solid;transition:all .2s;}
+.btn-acc{background:transparent;border-color:var(--bd-a, rgba(232,160,32,.3));color:var(--acc);}
+.btn-acc:hover{background:var(--adim);}
+.btn-grn{background:var(--grn);color:#fff;border:none;}
+.btn-grn:hover{opacity:.85;}
+
+/* ── TABLE ── */
+.tbl-wrap{background:var(--bg2);border:1px solid var(--bd);overflow-x:auto;margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:700px;}
+thead{background:var(--bg3);}
+th{padding:8px 11px;text-align:left;font-family:"Space Mono",monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);border-bottom:1px solid var(--bd);font-weight:400;white-space:nowrap;}
+td{padding:8px 11px;border-bottom:1px solid var(--bd);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.t-mono{font-family:"Space Mono",monospace;font-size:.72rem;}
+.t-sm{font-size:.76rem;color:var(--gr);}
+
+/* ── BADGES ── */
+.bge{font-family:"Space Mono",monospace;font-size:.5rem;font-weight:700;padding:2px 7px;border:1px solid;white-space:nowrap;}
+.bge.pending{color:#f0c060;border-color:rgba(240,192,96,.4);background:rgba(240,192,96,.07);}
+.bge.approved,.bge.active,.bge.delivered{color:#4cd48a;border-color:rgba(76,212,138,.35);background:rgba(76,212,138,.07);}
+.bge.rejected,.bge.cancelled{color:#e05555;border-color:rgba(224,85,85,.35);background:rgba(224,85,85,.07);}
+.bge.owner{color:#afa9ec;border-color:rgba(175,169,236,.35);background:rgba(175,169,236,.07);}
+.bge.seeker{color:#4ab8d4;border-color:rgba(74,184,212,.35);background:rgba(74,184,212,.07);}
+.bge.client{color:#f0c060;border-color:rgba(240,192,96,.35);background:rgba(240,192,96,.07);}
+.bge.producer{color:#27ae72;border-color:rgba(39,174,114,.35);background:rgba(39,174,114,.07);}
+.bge.oem{color:#4ab8d4;border-color:rgba(74,184,212,.35);background:rgba(74,184,212,.07);}
+.bge.gift{color:#afa9ec;border-color:rgba(175,169,236,.35);background:rgba(175,169,236,.07);}
+
+/* ── ACTION BTNS ── */
+.act{padding:2px 8px;font-family:"Space Mono",monospace;font-size:.48rem;background:transparent;border:1px solid var(--bd);color:var(--gr);margin-right:3px;transition:all .2s;}
+.act:hover{border-color:var(--bd-a, rgba(232,160,32,.3));color:var(--acc);}
+.act.ok{color:var(--grn);border-color:rgba(39,174,114,.3);}
+.act.ng{color:var(--red);border-color:rgba(224,85,85,.3);}
+
+/* ── MODAL ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.ov.open{display:flex;}
+.mbox{background:var(--bg2);border:1px solid var(--bd);width:440px;max-width:100%;padding:24px;max-height:85vh;overflow-y:auto;}
+.mttl{font-size:.94rem;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--bd);}
+.mrow{margin-bottom:10px;}
+.mlbl{font-size:.7rem;color:var(--gr);margin-bottom:2px;}
+.mval{font-size:.86rem;}
+.mfooter{display:flex;gap:7px;margin-top:16px;padding-top:12px;border-top:1px solid var(--bd);}
+.mbtn{padding:8px 16px;font-family:"Space Mono",monospace;font-size:.58rem;font-weight:700;letter-spacing:.06em;border:none;}
+.mbtn.ok{background:var(--grn);color:#fff;}
+.mbtn.ok:hover{opacity:.85;}
+.mbtn.ng{background:transparent;color:var(--red);border:1px solid rgba(224,85,85,.3);}
+.mbtn.cl{background:transparent;color:var(--gr);border:1px solid var(--bd);margin-left:auto;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--bg3);border:1px solid rgba(232,160,32,.35);padding:8px 15px;font-family:"Space Mono",monospace;font-size:.58rem;color:var(--acc);z-index:9999;opacity:0;transform:translateY(40px);transition:all .25s;max-width:300px;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* ── EMPTY / LOADING ── */
+.empty-msg{text-align:center;padding:48px 20px;color:var(--gr);font-size:.82rem;}
+</style>
+</head>
+<body>
+
+<!-- ═══ ログイン ═══ -->
+<div class="login-wrap" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">MA<span>RE</span></div>
+    <div class="login-sub">Unified Admin Dashboard</div>
+    <div class="f-lbl">メールアドレス</div>
+    <input class="f-inp" id="adEmail" type="email" placeholder="admin@mare-corp.com"
+      onkeydown="if(event.key==='Enter')login()">
+    <div class="f-lbl">パスワード</div>
+    <input class="f-inp" id="adPass" type="password" placeholder="管理者パスワード"
+      onkeydown="if(event.key==='Enter')login()">
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn-login" onclick="login()">ログイン →</button>
+    <p style="font-size:.66rem;color:var(--gr);margin-top:12px;line-height:1.65">
+      管理者アカウントは Supabase Authentication で作成してください。
+    </p>
+  </div>
+</div>
+
+<!-- ═══ ダッシュボード ═══ -->
+<div id="app">
+  <nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="logo">MA<span>RE</span></span>
+      <span class="logo-sub">統合管理</span>
+      <div class="biz-switch">
+        <button class="biz-btn on" id="biz-all" onclick="setBiz('all',this)">全事業</button>
+        <button class="biz-btn" id="biz-oem"  onclick="setBiz('oem',this)">OEM</button>
+        <button class="biz-btn" id="biz-gift" onclick="setBiz('gift',this)">ギフト</button>
+      </div>
+    </div>
+    <div class="nav-r">
+      <span style="font-family:'Space Mono',monospace;font-size:.56rem;color:var(--gr)" id="lastUpdate"></span>
+      <button class="btn-logout" onclick="logout()">ログアウト</button>
+    </div>
+  </nav>
+
+  <div class="main">
+
+    <!-- 統計 -->
+    <div class="stats" id="statsRow">
+      <div class="stat"><span class="stat-n" id="sTotal">—</span><span class="stat-l">登録者総数</span></div>
+      <div class="stat alert" id="sPendingWrap"><span class="stat-n" id="sPending">—</span><span class="stat-l">承認待ち</span></div>
+      <div class="stat"><span class="stat-n" id="sOEM">—</span><span class="stat-l">OEM申請中</span></div>
+      <div class="stat"><span class="stat-n" id="sGift">—</span><span class="stat-l">ギフト注文</span></div>
+      <div class="stat"><span class="stat-n" id="sLogs">—</span><span class="stat-l">送信ログ（今月）</span></div>
+    </div>
+
+    <!-- タブ -->
+    <div class="tab-bar">
+      <button class="tab on" onclick="showTab('users',this)">👥 登録者管理</button>
+      <button class="tab" onclick="showTab('oem',this)">🏭 OEM申請</button>
+      <button class="tab" onclick="showTab('gift',this)">🎁 ギフト注文</button>
+      <button class="tab" onclick="showTab('logs',this)">📋 送信履歴</button>
+    </div>
+
+    <!-- 登録者管理 -->
+    <div id="pane-users">
+      <div class="toolbar">
+        <input class="srch" id="uSearch" placeholder="会社名・メールで検索..." oninput="filterUsers()">
+        <select class="sel" id="uRole" onchange="filterUsers()">
+          <option value="">全ロール</option>
+          <option value="owner">OEMオーナー</option>
+          <option value="seeker">OEM借り受け</option>
+          <option value="client">ギフトクライアント</option>
+          <option value="producer">ギフト生産者</option>
+        </select>
+        <select class="sel" id="uStatus" onchange="filterUsers()">
+          <option value="">全ステータス</option>
+          <option value="pending">承認待ち</option>
+          <option value="approved">承認済み</option>
+          <option value="rejected">却下</option>
+        </select>
+        <button class="btn-sm btn-acc" onclick="exportCSV('users')">CSV出力</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>会社名</th><th>氏名</th><th>メール</th><th>都道府県</th>
+            <th>事業</th><th>ロール</th><th>ステータス</th><th>登録日</th><th>操作</th>
+          </tr></thead>
+          <tbody id="uBody"><tr><td colspan="9" class="empty-msg">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- OEM申請 -->
+    <div id="pane-oem" style="display:none">
+      <div class="toolbar">
+        <input class="srch" id="oSearch" placeholder="設備名・申請者で検索..." oninput="filterOEM()">
+        <select class="sel" id="oStatus" onchange="filterOEM()">
+          <option value="">全ステータス</option>
+          <option value="applying">申請中</option>
+          <option value="estimating">見積中</option>
+          <option value="agreed">合意済</option>
+          <option value="contracted">契約済</option>
+          <option value="active">稼働中</option>
+          <option value="done">完了</option>
+        </select>
+        <button class="btn-sm btn-acc" onclick="exportCSV('oem')">CSV出力</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>設備名</th><th>申請者</th><th>賃借料</th><th>期間</th>
+            <th>ステータス</th><th>申請日</th><th>操作</th>
+          </tr></thead>
+          <tbody id="oBody"><tr><td colspan="7" class="empty-msg">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ギフト注文 -->
+    <div id="pane-gift" style="display:none">
+      <div class="toolbar">
+        <input class="srch" id="gSearch" placeholder="受取人・コードで検索..." oninput="filterGift()">
+        <select class="sel" id="gStatus" onchange="filterGift()">
+          <option value="">全ステータス</option>
+          <option value="pending">未確認</option>
+          <option value="confirmed">確認済</option>
+          <option value="shipped">発送済</option>
+          <option value="delivered">配達済</option>
+          <option value="cancelled">キャンセル</option>
+        </select>
+        <button class="btn-sm btn-acc" onclick="exportCSV('gift')">CSV出力</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>受取人</th><th>商品</th><th>金額</th><th>ステータス</th>
+            <th>注文日</th><th>発送日</th><th>操作</th>
+          </tr></thead>
+          <tbody id="gBody"><tr><td colspan="7" class="empty-msg">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 送信履歴 -->
+    <div id="pane-logs" style="display:none">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>日時</th><th>事業</th><th>種別</th><th>件名</th><th>ステータス</th>
+          </tr></thead>
+          <tbody id="lBody"><tr><td colspan="5" class="empty-msg">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- モーダル -->
+<div class="ov" id="modal">
+  <div class="mbox">
+    <div class="mttl" id="mTitle">詳細</div>
+    <div id="mBody"></div>
+    <div class="mfooter">
+      <button class="mbtn ok" id="mOK" onclick="modalAction('approve')" style="display:none">承認</button>
+      <button class="mbtn ng" id="mNG" onclick="modalAction('reject')"  style="display:none">却下</button>
+      <button class="mbtn cl" onclick="closeModal()">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 設定 ──
+var SB_URL  = window.SUPABASE_URL;
+var SB_ANON = window.SUPABASE_ANON;
+var SB_SVC  = window.SUPABASE_SERVICE;
+
+// ── 状態 ──
+var _token = null;
+var _biz   = 'all';
+var _users = [], _oem = [], _gift = [], _logs = [];
+var _modal = null;
+
+// ── API ──
+async function api(path, opts) {
+  var key = (opts && opts.service) ? SB_SVC : SB_ANON;
+  var tok = (opts && opts.service) ? SB_SVC : (_token || SB_ANON);
+  var r = await fetch(SB_URL + '/rest/v1/' + path, {
+    method: (opts && opts.method) || 'GET',
+    headers: Object.assign({
+      'apikey': key,
+      'Authorization': 'Bearer ' + tok,
+      'Content-Type': 'application/json',
+      'Prefer': (opts && opts.prefer) || 'return=representation'
+    }, (opts && opts.headers) || {}),
+    body: (opts && opts.body) ? JSON.stringify(opts.body) : undefined
+  });
+  if (r.status === 204 || r.status === 200 && r.headers.get('content-length') === '0') return null;
+  return r.json();
+}
+
+// ── ログイン ──
+async function login() {
+  var email = document.getElementById('adEmail').value.trim();
+  var pass  = document.getElementById('adPass').value;
+  var err   = document.getElementById('loginErr');
+  err.style.display = 'none';
+  try {
+    var r = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SB_ANON },
+      body: JSON.stringify({ email: email, password: pass })
+    });
+    var j = await r.json();
+    if (j.error || !j.access_token) {
+      err.textContent = 'ログイン失敗: メールアドレスまたはパスワードをご確認ください。';
+      err.style.display = 'block';
+      return;
+    }
+    _token = j.access_token;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadAll();
+  } catch(e) {
+    err.textContent = 'ネットワークエラー: ' + e.message;
+    err.style.display = 'block';
+  }
+}
+
+function logout() {
+  _token = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ── データ読み込み ──
+async function loadAll() {
+  document.getElementById('lastUpdate').textContent = '更新中...';
+  await Promise.all([loadUsers(), loadOEM(), loadGift(), loadLogs()]);
+  updateStats();
+  document.getElementById('lastUpdate').textContent =
+    '最終更新: ' + new Date().toLocaleTimeString('ja-JP');
+}
+
+async function loadUsers() {
+  try {
+    var q = 'mare_users?order=registered_at.desc&limit=500';
+    if (_biz !== 'all') q += '&business_type=eq.' + _biz;
+    _users = await api(q, {service: true}) || [];
+    renderUsers(_users);
+  } catch(e) { setBody('uBody', 9, 'エラー: ' + e.message); }
+}
+
+async function loadOEM() {
+  try {
+    _oem = await api('mare_applications?order=applied_at.desc&limit=200', {service:true}) || [];
+    renderOEM(_oem);
+  } catch(e) { setBody('oBody', 7, 'OEM申請データなし（テーブル未作成の場合はSQLを実行してください）'); }
+}
+
+async function loadGift() {
+  try {
+    _gift = await api('mare_gift_orders?order=ordered_at.desc&limit=200', {service:true}) || [];
+    renderGift(_gift);
+  } catch(e) { setBody('gBody', 7, 'ギフト注文データなし'); }
+}
+
+async function loadLogs() {
+  try {
+    var q = 'mare_send_logs?order=sent_at.desc&limit=100';
+    if (_biz !== 'all') q += '&business_type=eq.' + _biz;
+    _logs = await api(q, {service:true}) || [];
+    renderLogs(_logs);
+  } catch(e) { setBody('lBody', 5, 'ログデータなし'); }
+}
+
+// ── 統計更新 ──
+function updateStats() {
+  var pending = _users.filter(function(u){return u.status==='pending';}).length;
+  document.getElementById('sTotal').textContent   = _users.length;
+  document.getElementById('sPending').textContent = pending;
+  document.getElementById('sOEM').textContent     = _oem.filter(function(o){return ['applying','estimating'].includes(o.status);}).length;
+  document.getElementById('sGift').textContent    = _gift.filter(function(g){return g.status==='pending';}).length;
+  document.getElementById('sLogs').textContent    = _logs.filter(function(l){
+    var d = new Date(l.sent_at);
+    var now = new Date();
+    return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+  }).length;
+  var pw = document.getElementById('sPendingWrap');
+  pw.classList.toggle('alert', pending > 0);
+}
+
+// ── 描画 ──
+function renderUsers(data) {
+  var el = document.getElementById('uBody');
+  if (!data.length) { el.innerHTML = '<tr><td colspan="9" class="empty-msg">登録者はいません</td></tr>'; return; }
+  el.innerHTML = data.map(function(u) {
+    var dt = u.registered_at ? new Date(u.registered_at).toLocaleDateString('ja-JP') : '—';
+    var role = u.oem_role !== 'none' ? u.oem_role : u.gift_role;
+    return '<tr>'
+      + '<td><strong>' + e(u.company_name) + '</strong></td>'
+      + '<td>' + e((u.last_name||'') + ' ' + (u.first_name||'')) + '</td>'
+      + '<td class="t-mono">' + e(u.email) + '</td>'
+      + '<td>' + e(u.prefecture||'—') + '</td>'
+      + '<td><span class="bge ' + (u.business_type||'oem') + '">' + bizLbl(u.business_type) + '</span></td>'
+      + '<td><span class="bge ' + (role||'') + '">' + roleLbl(u.oem_role, u.gift_role) + '</span></td>'
+      + '<td><span class="bge ' + (u.status||'pending') + '">' + stLbl(u.status) + '</span></td>'
+      + '<td class="t-mono t-sm">' + dt + '</td>'
+      + '<td>'
+      +   '<button class="act" onclick="openModal(\'user\',\'' + u.id + '\')">詳細</button>'
+      +   (u.status==='pending' ? '<button class="act ok" onclick="quick(\'' + u.id + '\',\'approve\')">承認</button>' : '')
+      + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function renderOEM(data) {
+  var el = document.getElementById('oBody');
+  if (!data.length) { el.innerHTML = '<tr><td colspan="7" class="empty-msg">申請データはありません</td></tr>'; return; }
+  var stMap = {applying:'申請中',estimating:'見積中',agreed:'合意済',contracted:'契約済',active:'稼働中',done:'完了',cancelled:'キャンセル'};
+  el.innerHTML = data.map(function(o) {
+    var dt = o.applied_at ? new Date(o.applied_at).toLocaleDateString('ja-JP') : '—';
+    return '<tr>'
+      + '<td><strong>' + e(o.equip_name||'—') + '</strong></td>'
+      + '<td>' + e(o.seeker_id||'—') + '</td>'
+      + '<td class="t-mono">' + e(o.price_label||'—') + '</td>'
+      + '<td>' + e(o.period||'—') + '</td>'
+      + '<td><span class="bge pending">' + (stMap[o.status]||o.status) + '</span></td>'
+      + '<td class="t-mono t-sm">' + dt + '</td>'
+      + '<td><button class="act" onclick="openModal(\'oem\',\'' + o.id + '\')">詳細</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function renderGift(data) {
+  var el = document.getElementById('gBody');
+  if (!data.length) { el.innerHTML = '<tr><td colspan="7" class="empty-msg">注文データはありません</td></tr>'; return; }
+  el.innerHTML = data.map(function(g) {
+    var od = g.ordered_at  ? new Date(g.ordered_at).toLocaleDateString('ja-JP')  : '—';
+    var sd = g.shipped_at  ? new Date(g.shipped_at).toLocaleDateString('ja-JP')  : '—';
+    return '<tr>'
+      + '<td><strong>' + e(g.recipient_name||'—') + '</strong></td>'
+      + '<td>' + e(g.product_id||'—') + '</td>'
+      + '<td class="t-mono">¥' + (g.total_price||0).toLocaleString() + '</td>'
+      + '<td><span class="bge ' + (g.status||'pending') + '">' + e(g.status||'—') + '</span></td>'
+      + '<td class="t-mono t-sm">' + od + '</td>'
+      + '<td class="t-mono t-sm">' + sd + '</td>'
+      + '<td><button class="act" onclick="openModal(\'gift\',\'' + g.id + '\')">詳細</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function renderLogs(data) {
+  var el = document.getElementById('lBody');
+  if (!data.length) { el.innerHTML = '<tr><td colspan="5" class="empty-msg">ログはありません</td></tr>'; return; }
+  var tmap = {registration:'新規登録',approval:'承認',rejection:'却下',estimate:'見積',contract:'契約',notification:'通知',other:'その他'};
+  el.innerHTML = data.map(function(l) {
+    var dt = new Date(l.sent_at).toLocaleString('ja-JP');
+    return '<tr>'
+      + '<td class="t-mono t-sm" style="white-space:nowrap">' + dt + '</td>'
+      + '<td><span class="bge ' + (l.business_type||'oem') + '">' + bizLbl(l.business_type) + '</span></td>'
+      + '<td><span class="bge pending">' + (tmap[l.type]||l.type) + '</span></td>'
+      + '<td>' + e(l.subject||'—') + '</td>'
+      + '<td><span class="bge approved">' + e(l.status||'—') + '</span></td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ── フィルター ──
+function filterUsers() {
+  var q  = document.getElementById('uSearch').value.toLowerCase();
+  var r  = document.getElementById('uRole').value;
+  var st = document.getElementById('uStatus').value;
+  renderUsers(_users.filter(function(u) {
+    var mq = !q || (u.company_name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q);
+    var mr = !r || u.oem_role===r || u.gift_role===r;
+    var ms = !st || u.status===st;
+    return mq && mr && ms;
+  }));
+}
+function filterOEM() {
+  var q  = document.getElementById('oSearch').value.toLowerCase();
+  var st = document.getElementById('oStatus').value;
+  renderOEM(_oem.filter(function(o) {
+    var mq = !q || (o.equip_name||'').toLowerCase().includes(q);
+    var ms = !st || o.status===st;
+    return mq && ms;
+  }));
+}
+function filterGift() {
+  var q  = document.getElementById('gSearch').value.toLowerCase();
+  var st = document.getElementById('gStatus').value;
+  renderGift(_gift.filter(function(g) {
+    var mq = !q || (g.recipient_name||'').toLowerCase().includes(q);
+    var ms = !st || g.status===st;
+    return mq && ms;
+  }));
+}
+
+// ── モーダル ──
+function openModal(type, id) {
+  var data, rows, showOK = false;
+  if (type === 'user') {
+    data = _users.find(function(u){return u.id===id;});
+    if (!data) return;
+    _modal = {type:'user', data:data};
+    rows = [
+      ['会社名',data.company_name],['氏名',(data.last_name||'')+ ' '+(data.first_name||'')],
+      ['メール',data.email],['電話',data.phone||'—'],['業種',data.industry||'—'],
+      ['従業員数',data.employees||'—'],['都道府県',data.prefecture||'—'],
+      ['事業区分',bizLbl(data.business_type)],['OEMロール',roleLbl(data.oem_role,'none')],
+      ['ギフトロール',roleLbl('none',data.gift_role)],['ステータス',stLbl(data.status)],
+      ['登録日',data.registered_at ? new Date(data.registered_at).toLocaleString('ja-JP') : '—'],
+    ];
+    document.getElementById('mTitle').textContent = data.company_name + ' — 詳細';
+    showOK = data.status === 'pending';
+  } else if (type === 'oem') {
+    data = _oem.find(function(o){return o.id===id;});
+    if (!data) return;
+    _modal = {type:'oem', data:data};
+    rows = [
+      ['設備名',data.equip_name||'—'],['メーカー',data.equip_maker||'—'],
+      ['賃借料',data.price_label||'—'],['期間',data.period||'—'],
+      ['ステータス',data.status||'—'],
+      ['申請日',data.applied_at ? new Date(data.applied_at).toLocaleString('ja-JP') : '—'],
+    ];
+    document.getElementById('mTitle').textContent = '申請詳細';
+  } else if (type === 'gift') {
+    data = _gift.find(function(g){return g.id===id;});
+    if (!data) return;
+    _modal = {type:'gift', data:data};
+    rows = [
+      ['受取人',data.recipient_name||'—'],['住所',data.recipient_address||'—'],
+      ['数量',data.quantity||1],['合計金額','¥'+(data.total_price||0).toLocaleString()],
+      ['ステータス',data.status||'—'],
+      ['注文日',data.ordered_at ? new Date(data.ordered_at).toLocaleString('ja-JP') : '—'],
+      ['発送日',data.shipped_at ? new Date(data.shipped_at).toLocaleString('ja-JP') : '未発送'],
+    ];
+    document.getElementById('mTitle').textContent = 'ギフト注文詳細';
+  }
+  document.getElementById('mBody').innerHTML = (rows||[]).map(function(r) {
+    return '<div class="mrow"><div class="mlbl">'+r[0]+'</div><div class="mval">'+e(String(r[1]))+'</div></div>';
+  }).join('');
+  document.getElementById('mOK').style.display = showOK ? '' : 'none';
+  document.getElementById('mNG').style.display = (type==='user' && data.status!=='rejected') ? '' : 'none';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  _modal = null;
+}
+
+async function modalAction(act) {
+  if (!_modal || _modal.type !== 'user') return;
+  var status = act === 'approve' ? 'approved' : 'rejected';
+  await updateUser(_modal.data.id, status);
+}
+
+async function quick(id, act) {
+  await updateUser(id, act === 'approve' ? 'approved' : 'rejected');
+}
+
+async function updateUser(id, status) {
+  try {
+    await api('mare_users?id=eq.' + id, {
+      method: 'PATCH', service: true,
+      prefer: 'return=minimal',
+      body: { status: status, approved_at: status==='approved' ? new Date().toISOString() : null }
+    });
+    await api('mare_send_logs', {
+      method: 'POST', service: true, prefer: 'return=minimal',
+      body: {
+        user_id: id, business_type: 'system',
+        type: status==='approved' ? 'approval' : 'rejection',
+        subject: '【MARE】' + (status==='approved' ? '承認' : '却下') + '処理',
+        body: 'ユーザーID: ' + id + ' → ' + status,
+        sent_by: 'admin'
+      }
+    });
+    toast(status==='approved' ? '✓ 承認しました' : '✓ 却下しました');
+    closeModal();
+    await loadAll();
+  } catch(err) { toast('エラー: ' + err.message); }
+}
+
+// ── CSV出力 ──
+function exportCSV(type) {
+  var data, cols;
+  if (type === 'users') {
+    data = _users;
+    cols = [
+      ['会社名','company_name'],['姓','last_name'],['名','first_name'],['メール','email'],
+      ['電話','phone'],['業種','industry'],['従業員数','employees'],['都道府県','prefecture'],
+      ['事業区分','business_type'],['OEMロール','oem_role'],['ステータス','status'],['登録日','registered_at']
+    ];
+  } else if (type === 'oem') {
+    data = _oem;
+    cols = [['設備名','equip_name'],['賃借料','price_label'],['期間','period'],['ステータス','status'],['申請日','applied_at']];
+  } else {
+    data = _gift;
+    cols = [['受取人','recipient_name'],['金額','total_price'],['ステータス','status'],['注文日','ordered_at'],['発送日','shipped_at']];
+  }
+  var csv = '\uFEFF' + cols.map(function(c){return '"'+c[0]+'"';}).join(',') + '\n'
+    + data.map(function(row) {
+      return cols.map(function(c){return '"'+String(row[c[1]]||'').replace(/"/g,'""')+'"';}).join(',');
+    }).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'MARE_' + type + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  toast('CSVを出力しました（' + data.length + '件）');
+}
+
+// ── タブ・事業切り替え ──
+function showTab(name, btn) {
+  ['users','oem','gift','logs'].forEach(function(t) {
+    document.getElementById('pane-'+t).style.display = t===name ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+}
+
+function setBiz(biz, btn) {
+  _biz = biz;
+  document.querySelectorAll('.biz-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  loadAll();
+}
+
+// ── ユーティリティ ──
+function setBody(id, cols, msg) {
+  document.getElementById(id).innerHTML = '<tr><td colspan="'+cols+'" class="empty-msg">'+msg+'</td></tr>';
+}
+function e(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function bizLbl(b) { return b==='gift'?'ギフト':b==='both'?'両事業':'OEM'; }
+function roleLbl(oem, gift) {
+  if (oem && oem !== 'none') return oem==='owner'?'オーナー':oem==='seeker'?'借り受け':'両方';
+  if (gift && gift !== 'none') return gift==='client'?'クライアント':gift==='producer'?'生産者':'受取人';
+  return '—';
+}
+function stLbl(s) {
+  return {pending:'承認待ち',approved:'承認済み',rejected:'却下',suspended:'停止'}[s] || s || '—';
+}
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(function(){t.classList.remove('show');},3000);
+}
+</script>
+</body>
+</html>
