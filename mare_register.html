@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>無料登録 — MARE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:       #0e1520;
+  --navy2:      #131c2b;
+  --steel:      #1e2d42;
+  --accent:     #e8a020;
+  --accent2:    #f0c060;
+  --accent-dim: rgba(232,160,32,0.14);
+  --cyan:       #4ab8d4;
+  --white:      #ffffff;
+  --gray:       rgba(255,255,255,0.55);
+  --border:     rgba(255,255,255,0.08);
+  --border-a:   rgba(232,160,32,0.28);
+  --green:      #27ae72;
+  --red:        #e05555;
+  --card:       rgba(255,255,255,0.04);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 52px;height:64px;background:rgba(10,17,28,.97);border-bottom:1px solid rgba(232,160,32,.25);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.18em;color:var(--white);text-decoration:none;}
+.nav-logo span{color:var(--accent);}
+.nav-back{font-family:'Noto Sans JP',sans-serif;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.88);text-decoration:none;transition:all .2s;padding:6px 12px;border-radius:3px;display:flex;align-items:center;gap:6px;}
+.nav-back:hover{color:var(--accent2);background:rgba(232,160,32,.12);}
+.nav-back:link,.nav-back:visited{color:rgba(255,255,255,.88);text-decoration:none;}
+.nav-back::before{content:'←';}
+
+/* ── LAYOUT ── */
+.reg-layout{display:grid;grid-template-columns:1fr 420px;min-height:calc(100vh - 65px);}
+
+/* ── LEFT PANEL ── */
+.left-panel{background:var(--navy2);padding:60px 56px;position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto;border-right:1px solid var(--border);}
+.left-tag{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.left-tag::before{content:'';width:24px;height:1.5px;background:var(--accent);}
+.left-title{font-size:2.2rem;font-weight:700;line-height:1.2;margin-bottom:14px;}
+.left-title em{font-style:normal;color:var(--accent);}
+.left-desc{font-size:.9rem;color:var(--gray);line-height:1.85;margin-bottom:40px;}
+
+/* メリットカード */
+.benefit-list{display:flex;flex-direction:column;gap:16px;margin-bottom:40px;}
+.benefit-card{display:flex;align-items:flex-start;gap:16px;padding:18px 20px;background:rgba(255,255,255,.04);border:1px solid var(--border);transition:border-color .3s;}
+.benefit-card:hover{border-color:var(--border-a);}
+.benefit-icon{width:40px;height:40px;background:var(--accent-dim);border:1px solid var(--border-a);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.benefit-text h4{font-size:.92rem;font-weight:700;margin-bottom:4px;}
+.benefit-text p{font-size:.78rem;color:var(--gray);line-height:1.65;}
+
+/* 既存ユーザー */
+.login-link{font-size:.82rem;color:var(--gray);text-align:center;padding:18px;border:1px solid var(--border);}
+.login-link a{color:var(--accent);text-decoration:none;font-weight:700;}
+.login-link a:hover{text-decoration:underline;}
+
+/* ── RIGHT PANEL (FORM) ── */
+.right-panel{padding:52px 44px 60px;overflow-y:auto;}
+
+/* STEP INDICATOR */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:44px;}
+.step{display:flex;align-items:center;gap:8px;}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;border:2px solid var(--border);color:var(--gray);transition:all .3s;}
+.step-num.active{background:var(--accent);border-color:var(--accent);color:var(--navy);}
+.step-num.done{background:var(--green);border-color:var(--green);color:var(--white);}
+.step-label{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);transition:color .3s;}
+.step-label.active{color:var(--accent);}
+.step-label.done{color:var(--green);}
+.step-connector{flex:1;height:1px;background:var(--border);margin:0 10px;min-width:24px;}
+.step-connector.done{background:var(--green);}
+
+/* FORM SECTION */
+.form-section{display:none;}
+.form-section.active{display:block;animation:sectionIn .35s ease;}
+@keyframes sectionIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+
+.section-heading{margin-bottom:28px;}
+.section-heading h2{font-size:1.3rem;font-weight:700;margin-bottom:4px;}
+.section-heading p{font-size:.82rem;color:var(--gray);}
+
+/* PURPOSE SELECT */
+.purpose-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+.purpose-card{padding:20px 18px;border:2px solid var(--border);cursor:pointer;transition:all .25s;position:relative;}
+.purpose-card:hover{border-color:rgba(255,255,255,.2);}
+.purpose-card.selected{border-color:var(--accent);background:var(--accent-dim);}
+.purpose-card input{position:absolute;opacity:0;pointer-events:none;}
+.purpose-card .p-icon{font-size:1.6rem;margin-bottom:8px;}
+.purpose-card .p-title{font-size:.95rem;font-weight:700;margin-bottom:4px;}
+.purpose-card .p-desc{font-size:.75rem;color:var(--gray);line-height:1.55;}
+.purpose-card.selected .p-desc{color:rgba(255,255,255,.6);}
+.purpose-badge{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;font-size:.55rem;color:var(--navy);font-weight:700;}
+.purpose-card.selected .purpose-badge{display:flex;}
+
+/* FIELD */
+.field{margin-bottom:22px;}
+.field-label{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gray);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.req{color:var(--accent);font-size:.58rem;}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--steel);border:1px solid var(--border);
+  color:var(--white);font-family:'Noto Sans JP',sans-serif;font-size:.9rem;
+  padding:12px 16px;outline:none;transition:border-color .25s;
+  -webkit-appearance:none;
+}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.25);}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field input.error,.field select.error,.field textarea.error{border-color:var(--red);}
+.field textarea{resize:vertical;min-height:90px;line-height:1.7;}
+.field select option{background:var(--steel);}
+.field-hint{font-size:.72rem;color:rgba(255,255,255,.3);margin-top:5px;}
+.field-error{font-size:.72rem;color:var(--red);margin-top:5px;display:none;}
+.field-error.show{display:block;}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* EQUIPMENT FORM (OWNER ONLY) */
+.owner-section{padding:22px;background:rgba(232,160,32,.06);border:1px solid var(--border-a);margin-bottom:22px;}
+.owner-label{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.owner-label::before{content:'';width:18px;height:1.5px;background:var(--accent);}
+
+/* PHOTO UPLOAD */
+.upload-area{border:2px dashed var(--border-a);padding:28px;text-align:center;cursor:pointer;transition:all .25s;position:relative;background:var(--accent-dim);}
+.upload-area:hover{border-color:var(--accent);background:rgba(232,160,32,.1);}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.upload-icon{font-size:1.8rem;margin-bottom:8px;}
+.upload-text{font-size:.82rem;color:var(--gray);}
+.upload-text span{color:var(--accent);font-weight:700;}
+.upload-hint{font-size:.7rem;color:rgba(255,255,255,.25);margin-top:4px;}
+.upload-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.preview-thumb{width:64px;height:64px;object-fit:cover;border:1px solid var(--border-a);}
+
+/* TERMS */
+.terms-box{background:var(--steel);border:1px solid var(--border);padding:16px;max-height:140px;overflow-y:auto;font-size:.75rem;color:rgba(255,255,255,.45);line-height:1.8;margin-bottom:14px;}
+.terms-box::-webkit-scrollbar{width:4px;}
+.terms-box::-webkit-scrollbar-thumb{background:var(--border-a);}
+.terms-check{display:flex;align-items:flex-start;gap:10px;cursor:pointer;}
+.terms-check input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;margin-top:2px;flex-shrink:0;}
+.terms-check label{font-size:.82rem;color:var(--gray);cursor:pointer;line-height:1.55;}
+.terms-check label a{color:var(--accent);text-decoration:none;}
+.terms-check label a:hover{text-decoration:underline;}
+
+/* CONFIRM TABLE */
+.confirm-table{border:1px solid var(--border);margin-bottom:28px;}
+.confirm-row{display:grid;grid-template-columns:140px 1fr;border-bottom:1px solid var(--border);}
+.confirm-row:last-child{border-bottom:none;}
+.conf-key{padding:12px 16px;background:rgba(255,255,255,.04);font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);display:flex;align-items:center;}
+.conf-val{padding:12px 16px;font-size:.88rem;}
+.conf-val.accent{color:var(--accent);font-family:'Space Mono',monospace;}
+
+/* BUTTONS */
+.btn-primary{width:100%;padding:15px;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:background .2s;margin-top:8px;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-primary:disabled{background:var(--steel);color:var(--gray);cursor:not-allowed;clip-path:none;}
+.btn-secondary{width:100%;padding:13px;background:transparent;border:1px solid var(--border);color:var(--gray);font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:10px;}
+.btn-secondary:hover{border-color:var(--border-a);color:var(--accent);}
+
+/* COMPLETE SCREEN */
+.complete-screen{display:none;text-align:center;padding:60px 20px;animation:sectionIn .5s ease;}
+.complete-screen.show{display:block;}
+.complete-icon{font-size:3.5rem;margin-bottom:20px;}
+.complete-title{font-size:1.6rem;font-weight:700;margin-bottom:10px;}
+.complete-title em{font-style:normal;color:var(--accent);}
+.complete-desc{font-size:.88rem;color:var(--gray);line-height:1.85;margin-bottom:32px;}
+.complete-next{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto;}
+.btn-link{display:block;padding:13px;text-align:center;font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .2s;}
+.btn-link.primary{background:var(--accent);color:var(--navy);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.btn-link.primary:hover{background:var(--accent2);}
+.btn-link.outline{border:1px solid var(--border);color:var(--gray);}
+.btn-link.outline:hover{border-color:var(--border-a);color:var(--accent);}
+
+/* PROGRESS BAR */
+.progress-bar{height:3px;background:var(--steel);margin-bottom:36px;position:relative;}
+.progress-fill{height:100%;background:var(--accent);transition:width .4s ease;}
+
+/* PASSWORD STRENGTH */
+.pw-strength{display:flex;gap:4px;margin-top:8px;}
+.pw-bar{flex:1;height:3px;background:var(--steel);border-radius:2px;transition:background .3s;}
+.pw-bar.weak{background:var(--red);}
+.pw-bar.medium{background:var(--accent);}
+.pw-bar.strong{background:var(--green);}
+.pw-label{font-size:.68rem;color:var(--gray);margin-top:4px;}
+
+/* ── リンクデフォルトスタイル完全リセット ── */
+a { color: inherit; text-decoration: none; }
+a:link, a:visited, a:hover, a:active { text-decoration: none; }
+.nav-links a,
+.nav-links a:link,
+.nav-links a:visited { color: var(--gray) !important; text-decoration: none !important; }
+.nav-links a:hover { color: var(--accent) !important; }
+.nav-logo,
+.nav-logo:link,
+.nav-logo:visited { color: var(--white) !important; text-decoration: none !important; }
+.nav-cta,
+.nav-cta:link,
+.nav-cta:visited { color: var(--navy) !important; text-decoration: none !important; }
+
+</style>
+
+  <!-- Supabase設定 -->
+  <script>
+    window.SUPABASE_URL  = 'https://krozenkyjdicvmwqhufd.supabase.co';
+    window.SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3plbmt5amRpY3Ztd3FodWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyOTIxMjUsImV4cCI6MjA5MDg2ODEyNX0.ZNPNpZNxLjndt5LMpMmnwznmTbhZVYHREzBlQ3shpiE';
+  </script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="oem_platform.html" class="nav-logo">MA<span>RE</span></a>
+  <ul class="nav-links">
+    <li><a href="oem_platform.html">トップ</a></li>
+    <li><a href="mare_search.html">設備を探す</a></li>
+    <li><a href="mare_mypage.html">申請フロー</a></li>
+  </ul>
+</nav>
+
+<!-- LAYOUT -->
+<div class="reg-layout">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <p class="left-tag">Free Registration</p>
+    <h1 class="left-title">無料で<em>登録</em>して、<br>設備をつなごう。</h1>
+    <p class="left-desc">初期費用ゼロ・掲載無料でスタート。マッチング成立時のみ手数料が発生します。まず登録して、プラットフォームの可能性を確かめてください。</p>
+
+    <div class="benefit-list">
+      <div class="benefit-card">
+        <div class="benefit-icon">📋</div>
+        <div class="benefit-text">
+          <h4>設備の掲載・検索が無料</h4>
+          <p>遊休設備の登録も、借りたい設備の検索も一切費用がかかりません。</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">💼</div>
+        <div class="benefit-text">
+          <h4>マッチング成立時のみ手数料</h4>
+          <p>成約した場合のみ賃借料の10%が発生。リスクなく始められます。</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">👷</div>
+        <div class="benefit-text">
+          <h4>人材派遣もワンストップで</h4>
+          <p>設備操作に精通した技術者・オペレーターも同時に手配できます。</p>
+        </div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🔒</div>
+        <div class="benefit-text">
+          <h4>安心のセキュリティ</h4>
+          <p>企業審査・電子契約・プラットフォーム決済で安全に取引できます。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-link">
+      すでにアカウントをお持ちの方は <a href="#">ログイン</a>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <!-- STEP INDICATOR -->
+    <div class="steps" id="stepIndicator">
+      <div class="step">
+        <div class="step-num active" id="snum1">1</div>
+        <span class="step-label active" id="slabel1">利用目的</span>
+      </div>
+      <div class="step-connector" id="sc1"></div>
+      <div class="step">
+        <div class="step-num" id="snum2">2</div>
+        <span class="step-label" id="slabel2">企業情報</span>
+      </div>
+      <div class="step-connector" id="sc2"></div>
+      <div class="step">
+        <div class="step-num" id="snum3">3</div>
+        <span class="step-label" id="slabel3">アカウント</span>
+      </div>
+      <div class="step-connector" id="sc3"></div>
+      <div class="step">
+        <div class="step-num" id="snum4">4</div>
+        <span class="step-label" id="slabel4">確認・同意</span>
+      </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:25%"></div>
+    </div>
+
+    <!-- STEP 1: 利用目的 -->
+    <div class="form-section active" id="step1">
+      <div class="section-heading">
+        <h2>利用目的を選択してください</h2>
+        <p>目的に合わせた登録フォームをご用意しています。</p>
+      </div>
+
+      <div class="purpose-grid">
+        <div class="purpose-card" id="pc-owner" onclick="selectPurpose('owner')">
+          <input type="radio" name="purpose" value="owner">
+          <div class="purpose-badge">✓</div>
+          <div class="p-icon">🏭</div>
+          <div class="p-title">設備を貸したい</div>
+          <div class="p-desc">遊休設備をプラットフォームに掲載し、賃借料収入を得たい企業向け</div>
+        </div>
+        <div class="purpose-card" id="pc-seeker" onclick="selectPurpose('seeker')">
+          <input type="radio" name="purpose" value="seeker">
+          <div class="purpose-badge">✓</div>
+          <div class="p-icon">🔧</div>
+          <div class="p-title">設備を借りたい</div>
+          <div class="p-desc">製造設備を一時的に借りて生産能力を拡大したい企業向け</div>
+        </div>
+        <div class="purpose-card" id="pc-both" onclick="selectPurpose('both')" style="grid-column:1/-1">
+          <input type="radio" name="purpose" value="both">
+          <div class="purpose-badge">✓</div>
+          <div class="p-icon">🔄</div>
+          <div class="p-title">両方利用したい</div>
+          <div class="p-desc">設備の貸し出しと借り受けの両方を行いたい企業向け。すべての機能を利用できます。</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="step1Next" onclick="goStep(2)" disabled>次へ進む →</button>
+    </div>
+
+    <!-- STEP 2: 企業情報 -->
+    <div class="form-section" id="step2">
+      <div class="section-heading">
+        <h2>企業情報を入力してください</h2>
+        <p>登録内容は審査後に公開されます。正確な情報をご入力ください。</p>
+      </div>
+
+      <div class="field">
+        <div class="field-label">会社名 <span class="req">必須</span></div>
+        <input type="text" id="companyName" placeholder="株式会社MARE製造" oninput="validateStep2()">
+        <div class="field-error" id="err-company">会社名を入力してください</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label">担当者名（姓） <span class="req">必須</span></div>
+          <input type="text" id="lastName" placeholder="山田" oninput="validateStep2()">
+        </div>
+        <div class="field">
+          <div class="field-label">担当者名（名） <span class="req">必須</span></div>
+          <input type="text" id="firstName" placeholder="太郎" oninput="validateStep2()">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">業種 <span class="req">必須</span></div>
+        <select id="industry" onchange="validateStep2()">
+          <option value="">業種を選択してください</option>
+          <option value="auto">自動車・輸送機器</option>
+          <option value="electric">電気・電子機器</option>
+          <option value="metal">金属・鉄鋼</option>
+          <option value="chemical">化学・素材</option>
+          <option value="food">食品・飲料</option>
+          <option value="precision">精密機器</option>
+          <option value="other">その他製造業</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label">従業員数</div>
+          <select id="employees">
+            <option value="">選択してください</option>
+            <option value="s">1〜29名</option>
+            <option value="m">30〜99名</option>
+            <option value="l">100〜299名</option>
+            <option value="xl">300名以上</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">都道府県 <span class="req">必須</span></div>
+          <select id="prefecture" onchange="validateStep2()">
+            <option value="">選択してください</option>
+            <option>北海道</option><option>青森県</option><option>岩手県</option>
+            <option>宮城県</option><option>秋田県</option><option>山形県</option>
+            <option>福島県</option><option>茨城県</option><option>栃木県</option>
+            <option>群馬県</option><option>埼玉県</option><option>千葉県</option>
+            <option>東京都</option><option>神奈川県</option><option>新潟県</option>
+            <option>富山県</option><option>石川県</option><option>福井県</option>
+            <option>山梨県</option><option>長野県</option><option>岐阜県</option>
+            <option>静岡県</option><option>愛知県</option><option>三重県</option>
+            <option>滋賀県</option><option>京都府</option><option>大阪府</option>
+            <option>兵庫県</option><option>奈良県</option><option>和歌山県</option>
+            <option>鳥取県</option><option>島根県</option><option>岡山県</option>
+            <option>広島県</option><option>山口県</option><option>徳島県</option>
+            <option>香川県</option><option>愛媛県</option><option>高知県</option>
+            <option>福岡県</option><option>佐賀県</option><option>長崎県</option>
+            <option>熊本県</option><option>大分県</option><option>宮崎県</option>
+            <option>鹿児島県</option><option>沖縄県</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">電話番号 <span class="req">必須</span></div>
+        <input type="tel" id="phone" placeholder="03-1234-5678" oninput="validateStep2()">
+        <div class="field-hint">ハイフン区切りで入力してください</div>
+      </div>
+
+      <!-- 設備情報（オーナー向けのみ表示） -->
+      <div id="ownerSection" style="display:none">
+        <div class="owner-section">
+          <div class="owner-label">設備情報（初期掲載用）</div>
+
+          <div class="field">
+            <div class="field-label">設備名・型番</div>
+            <input type="text" placeholder="例：200t 油圧プレス機 AP-200T">
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <div class="field-label">設備カテゴリ</div>
+              <select>
+                <option value="">選択してください</option>
+                <option>プレス加工</option>
+                <option>CNC / 切削</option>
+                <option>溶接 / ロボット</option>
+                <option>レーザー加工</option>
+                <option>樹脂成形</option>
+                <option>品質検査</option>
+                <option>その他</option>
+              </select>
+            </div>
+            <div class="field">
+              <div class="field-label">月額賃借料（税抜）</div>
+              <input type="text" placeholder="例：¥280,000">
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">設備の写真（最大10枚）</div>
+            <div class="upload-area" onclick="document.getElementById('photoInput').click()">
+              <input type="file" id="photoInput" multiple accept="image/*" onchange="previewPhotos(this)">
+              <div class="upload-icon">📷</div>
+              <div class="upload-text">クリックまたはドラッグ＆ドロップで<span>写真をアップロード</span></div>
+              <div class="upload-hint">JPG / PNG・1枚あたり10MB以下・最大10枚</div>
+            </div>
+            <div class="upload-preview" id="photoPreview"></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">人材派遣の提供</div>
+            <select>
+              <option value="">選択してください</option>
+              <option value="yes">提供できる</option>
+              <option value="no">提供できない</option>
+              <option value="discuss">要相談</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-direction:column">
+        <button class="btn-primary" id="step2Next" onclick="goStep(3)" disabled>次へ進む →</button>
+        <button class="btn-secondary" onclick="goStep(1)">← 戻る</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: アカウント -->
+    <div class="form-section" id="step3">
+      <div class="section-heading">
+        <h2>アカウント情報を設定してください</h2>
+        <p>ログインに使用するメールアドレスとパスワードを設定します。</p>
+      </div>
+
+      <div class="field">
+        <div class="field-label">メールアドレス <span class="req">必須</span></div>
+        <input type="email" id="email" placeholder="info@example.com" oninput="validateStep3()">
+        <div class="field-error" id="err-email">有効なメールアドレスを入力してください</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">パスワード <span class="req">必須</span></div>
+        <input type="password" id="password" placeholder="8文字以上・英数字を含む" oninput="checkPassword();validateStep3()">
+        <div class="pw-strength">
+          <div class="pw-bar" id="pb1"></div>
+          <div class="pw-bar" id="pb2"></div>
+          <div class="pw-bar" id="pb3"></div>
+          <div class="pw-bar" id="pb4"></div>
+        </div>
+        <div class="pw-label" id="pwLabel">パスワードを入力してください</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">パスワード（確認） <span class="req">必須</span></div>
+        <input type="password" id="passwordConfirm" placeholder="もう一度入力してください" oninput="validateStep3()">
+        <div class="field-error" id="err-pw">パスワードが一致しません</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">紹介コード（任意）</div>
+        <input type="text" placeholder="MARE-XXXXX">
+        <div class="field-hint">紹介者からコードを受け取った場合は入力してください</div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-direction:column">
+        <button class="btn-primary" id="step3Next" onclick="goStep(4)" disabled>次へ進む →</button>
+        <button class="btn-secondary" onclick="goStep(2)">← 戻る</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: 確認・同意 -->
+    <div class="form-section" id="step4">
+      <div class="section-heading">
+        <h2>登録内容を確認してください</h2>
+        <p>内容を確認の上、利用規約に同意して登録を完了してください。</p>
+      </div>
+
+      <div class="confirm-table" id="confirmTable"></div>
+
+      <div class="terms-box">
+        <strong>利用規約（抜粋）</strong><br><br>
+        第1条（目的）本規約は、MARE Inc.（以下「当社」）が提供するMAREプラットフォーム（以下「本サービス」）の利用条件を定めるものです。<br><br>
+        第2条（登録）利用者は本規約に同意の上、所定の手続きにより登録申請を行うものとします。当社は審査の結果によっては登録をお断りする場合があります。<br><br>
+        第3条（手数料）マッチング成立時、賃借料の10%を設備オーナーより手数料として頂戴します。人材派遣成立時は派遣費の15%を申し受けます。<br><br>
+        第4条（禁止事項）本サービスを利用して違法行為、虚偽情報の掲載、当社の信頼を損なう行為を行ってはなりません。<br><br>
+        第5条（免責）当社は設備の品質・性能について保証しません。利用者間のトラブルは当事者間で解決するものとします。<br><br>
+        第6条（個人情報）当社は取得した個人情報をプライバシーポリシーに従い適切に管理します。
+      </div>
+
+      <label class="terms-check" style="margin-bottom:10px">
+        <input type="checkbox" id="termsAgree" onchange="validateStep4()">
+        <label for="termsAgree"><a href="#">利用規約</a>および<a href="#">プライバシーポリシー</a>に同意する <span style="color:var(--accent)">*</span></label>
+      </label>
+      <label class="terms-check" style="margin-bottom:24px">
+        <input type="checkbox" id="ageCheck" onchange="validateStep4()">
+        <label for="ageCheck">本登録に関して権限を持つ担当者として、正確な情報を入力しました <span style="color:var(--accent)">*</span></label>
+      </label>
+
+      <div style="display:flex;gap:10px;flex-direction:column">
+        <button class="btn-primary" id="step4Submit" onclick="submitForm()" disabled>登録を完了する →</button>
+        <button class="btn-secondary" onclick="goStep(3)">← 戻る</button>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="complete-screen" id="completeScreen">
+      <div class="complete-icon">✅</div>
+      <h2 class="complete-title">登録が<em>完了</em>しました！</h2>
+      <p class="complete-desc">
+        ご登録ありがとうございます。<br>
+        入力いただいたメールアドレスに確認メールをお送りしました。<br>
+        審査完了（通常1営業日）後、すべての機能をご利用いただけます。
+      </p>
+      <div class="complete-next">
+        <a href="mare_search.html" class="btn-link primary">設備を探してみる →</a>
+        <a href="oem_platform.html" class="btn-link outline">トップページに戻る</a>
+      </div>
+    </div>
+
+  </div><!-- /right-panel -->
+</div><!-- /reg-layout -->
+
+<script>
+// ── 状態管理 ─────────────────────────────────────────
+let selectedPurpose = '';
+let currentStep = 1;
+const TOTAL_STEPS = 4;
+
+// ── 利用目的選択 ─────────────────────────────────────
+function selectPurpose(p) {
+  selectedPurpose = p;
+  ['owner','seeker','both'].forEach(id => {
+    document.getElementById('pc-' + id).classList.toggle('selected', id === p);
+  });
+  // オーナー項目の表示制御
+  const ownerSec = document.getElementById('ownerSection');
+  ownerSec.style.display = (p === 'owner' || p === 'both') ? 'block' : 'none';
+  document.getElementById('step1Next').disabled = false;
+}
+
+// ── ステップ遷移 ─────────────────────────────────────
+function goStep(n) {
+  if (n < 1 || n > TOTAL_STEPS) return;
+
+  // 現在ステップを非表示
+  document.getElementById('step' + currentStep).classList.remove('active');
+
+  // ステップインジケーター更新
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const num   = document.getElementById('snum' + i);
+    const label = document.getElementById('slabel' + i);
+    const conn  = document.getElementById('sc' + i);
+    if (i < n) {
+      num.classList.remove('active'); num.classList.add('done'); num.textContent = '✓';
+      label.classList.remove('active'); label.classList.add('done');
+      if (conn) conn.classList.add('done');
+    } else if (i === n) {
+      num.classList.add('active'); num.classList.remove('done');
+      num.textContent = i;
+      label.classList.add('active'); label.classList.remove('done');
+    } else {
+      num.classList.remove('active','done'); num.textContent = i;
+      label.classList.remove('active','done');
+      if (conn) conn.classList.remove('done');
+    }
+  }
+
+  // プログレスバー
+  document.getElementById('progressFill').style.width = (n / TOTAL_STEPS * 100) + '%';
+
+  // 確認画面のビルド
+  if (n === 4) buildConfirm();
+
+  currentStep = n;
+  document.getElementById('step' + n).classList.add('active');
+  document.querySelector('.right-panel').scrollTop = 0;
+}
+
+// ── バリデーション ────────────────────────────────────
+function validateStep2() {
+  const ok = document.getElementById('companyName').value.trim() &&
+             document.getElementById('lastName').value.trim() &&
+             document.getElementById('firstName').value.trim() &&
+             document.getElementById('industry').value &&
+             document.getElementById('prefecture').value &&
+             document.getElementById('phone').value.trim();
+  document.getElementById('step2Next').disabled = !ok;
+}
+
+function validateStep3() {
+  const email = document.getElementById('email').value;
+  const pw    = document.getElementById('password').value;
+  const pwc   = document.getElementById('passwordConfirm').value;
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const pwOk    = pw.length >= 8;
+  const matchOk = pw === pwc && pwc !== '';
+
+  const errEmail = document.getElementById('err-email');
+  const errPw    = document.getElementById('err-pw');
+  errEmail.classList.toggle('show', email.length > 0 && !emailOk);
+  errPw.classList.toggle('show', pwc.length > 0 && !matchOk);
+
+  document.getElementById('step3Next').disabled = !(emailOk && pwOk && matchOk);
+}
+
+function validateStep4() {
+  const ok = document.getElementById('termsAgree').checked &&
+             document.getElementById('ageCheck').checked;
+  document.getElementById('step4Submit').disabled = !ok;
+}
+
+// ── パスワード強度 ────────────────────────────────────
+function checkPassword() {
+  const pw = document.getElementById('password').value;
+  let score = 0;
+  if (pw.length >= 8)                           score++;
+  if (/[A-Z]/.test(pw) || /[a-z]/.test(pw))    score++;
+  if (/[0-9]/.test(pw))                         score++;
+  if (/[^A-Za-z0-9]/.test(pw))                  score++;
+
+  const bars   = ['pb1','pb2','pb3','pb4'];
+  const labels = ['','弱い','普通','強い','非常に強い'];
+  const cls    = ['','weak','weak','medium','strong'];
+  bars.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'pw-bar';
+    if (i < score) el.classList.add(cls[score]);
+  });
+  document.getElementById('pwLabel').textContent = pw.length ? labels[score] : 'パスワードを入力してください';
+}
+
+// ── 確認テーブル ─────────────────────────────────────
+function buildConfirm() {
+  const purposeMap = { owner:'設備を貸したい', seeker:'設備を借りたい', both:'両方利用したい' };
+  const rows = [
+    ['利用目的', purposeMap[selectedPurpose] || '—'],
+    ['会社名',   document.getElementById('companyName').value || '—'],
+    ['担当者名', (document.getElementById('lastName').value + ' ' + document.getElementById('firstName').value).trim() || '—'],
+    ['都道府県', document.getElementById('prefecture').value || '—'],
+    ['電話番号', document.getElementById('phone').value || '—'],
+    ['メールアドレス', document.getElementById('email').value || '—'],
+  ];
+  document.getElementById('confirmTable').innerHTML = rows.map(([k,v]) => `
+    <div class="confirm-row">
+      <div class="conf-key">${k}</div>
+      <div class="conf-val">${v}</div>
+    </div>
+  `).join('');
+}
+
+// ── 写真プレビュー ────────────────────────────────────
+function previewPhotos(input) {
+  const preview = document.getElementById('photoPreview');
+  preview.innerHTML = '';
+  const files = Array.from(input.files).slice(0, 10);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'preview-thumb';
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── 送信 ─────────────────────────────────────────────
+function submitForm() {
+  const role       = currentPurpose === 'owner' ? 'owner' : currentPurpose === 'both' ? 'both' : 'seeker';
+  const email      = (document.getElementById('email')?.value || '').trim();
+  const password   = document.getElementById('password')?.value || '';
+  const company    = (document.getElementById('companyName')?.value || '').trim();
+  const lastName   = (document.getElementById('lastName')?.value  || '').trim();
+  const firstName  = (document.getElementById('firstName')?.value || '').trim();
+  const phone      = (document.getElementById('phone')?.value     || '').trim();
+  const industry   = document.getElementById('industry')?.value   || '';
+  const employees  = document.getElementById('employees')?.value  || '';
+  const prefecture = document.getElementById('prefecture')?.value || '';
+
+  // localStorageに保存
+  try {
+    localStorage.setItem('mare_user', JSON.stringify({
+      role, email, company, registeredAt: new Date().toISOString(), loggedIn: true
+    }));
+    localStorage.setItem('mare_role', role);
+    localStorage.setItem('mare_logged_in', 'true');
+  } catch(e) {}
+
+  // Supabaseに送信
+  sendToSupabase({ role, email, password, company, lastName, firstName, phone, industry, employees, prefecture });
+}
+
+async function sendToSupabase(d) {
+  const SB_URL  = window.SUPABASE_URL;
+  const SB_ANON = window.SUPABASE_ANON;
+  if (!SB_URL || SB_URL.includes('XXXXX')) { showComplete(); return; }
+
+  try {
+    // ① Supabase Authでユーザー作成（パスワードは自動でbcryptハッシュ化）
+    const authRes = await fetch(SB_URL + '/auth/v1/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SB_ANON },
+      body: JSON.stringify({
+        email: d.email,
+        password: d.password,
+        options: { data: { company_name: d.company, role: d.role } }
+      })
+    });
+    const auth = await authRes.json();
+    if (auth.error && !auth.error.message.includes('already registered')) {
+      console.warn('Auth error:', auth.error.message);
+    }
+
+    const userId = auth.user?.id;
+
+    // ② mare_usersテーブルにプロフィール保存
+    if (userId) {
+      await fetch(SB_URL + '/rest/v1/mare_users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SB_ANON,
+          'Authorization': 'Bearer ' + (auth.session?.access_token || SB_ANON),
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          id: userId,
+          email: d.email,
+          company_name: d.company,
+          last_name: d.lastName,
+          first_name: d.firstName,
+          phone: d.phone,
+          industry: d.industry,
+          employees: d.employees,
+          prefecture: d.prefecture,
+          oem_role: d.role,
+          business_type: 'oem',
+          status: 'pending'
+        })
+      });
+    }
+  } catch(e) {
+    console.warn('Supabase送信エラー（ローカル保存のみ）:', e);
+  }
+
+  showComplete();
+}
+
+function showComplete() {
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    document.getElementById('step' + i).classList.remove('active');
+  }
+  document.getElementById('stepIndicator').style.display = 'none';
+  document.querySelector('.progress-bar').style.display = 'none';
+  document.getElementById('completeScreen').classList.add('show');
+}
+</script>
+</body>
+</html>

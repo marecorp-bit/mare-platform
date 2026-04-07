@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARE — デモシナリオ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #0e1520;
+  --navy2:  #131c2b;
+  --steel:  #1e2d42;
+  --accent: #e8a020;
+  --accent2:#f0c060;
+  --adim:   rgba(232,160,32,0.13);
+  --cyan:   #4ab8d4;
+  --green:  #27ae72;
+  --red:    #e05555;
+  --white:  #ffffff;
+  --gray:   rgba(255,255,255,0.55);
+  --border: rgba(255,255,255,0.08);
+  --bora:   rgba(232,160,32,0.28);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Noto Sans JP',sans-serif;background:var(--navy);color:var(--white);overflow:hidden;}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;background:rgba(14,21,32,.97);
+  border-bottom:1px solid var(--border);height:52px;flex-shrink:0;
+}
+.logo{font-family:'Space Mono',monospace;font-size:.9rem;font-weight:700;letter-spacing:.18em;}
+.logo span{color:var(--accent);}
+.header-center{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gray);}
+.header-right{display:flex;align-items:center;gap:12px;}
+.mode-indicator{
+  font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 12px;border:1px solid var(--bora);color:var(--accent);
+}
+.btn-reset{
+  padding:6px 16px;background:transparent;border:1px solid var(--border);
+  color:var(--gray);font-family:'Space Mono',monospace;font-size:.56rem;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;
+}
+.btn-reset:hover{border-color:var(--bora);color:var(--accent);}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:340px 1fr;height:calc(100vh - 52px);}
+
+/* ── LEFT PANEL（シナリオ） ── */
+.scenario-panel{
+  background:var(--navy2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* ロール切り替えタブ */
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);}
+.role-tab{
+  padding:12px;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;text-align:center;cursor:pointer;border:none;
+  background:transparent;color:var(--gray);transition:all .2s;border-bottom:2px solid transparent;
+}
+.role-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--adim);}
+
+/* プログレス */
+.progress-wrap{padding:16px 20px 0;flex-shrink:0;}
+.progress-label{
+  font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gray);margin-bottom:8px;
+  display:flex;justify-content:space-between;
+}
+.progress-bar{height:3px;background:var(--steel);border-radius:2px;}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .5s ease;}
+
+/* ステップリスト */
+.steps-list{overflow-y:auto;flex:1;padding:16px 0 24px;}
+.step-item{
+  padding:14px 20px;cursor:pointer;border-left:3px solid transparent;
+  transition:all .2s;position:relative;
+}
+.step-item:hover{background:rgba(255,255,255,.03);}
+.step-item.active{background:var(--adim);border-left-color:var(--accent);}
+.step-item.done{border-left-color:var(--green);opacity:.75;}
+.step-item.done:hover{opacity:1;}
+
+.step-num{
+  font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.15em;
+  text-transform:uppercase;margin-bottom:4px;
+  display:flex;align-items:center;gap:8px;
+}
+.step-num .num{
+  width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.55rem;font-weight:700;background:var(--steel);color:var(--gray);flex-shrink:0;
+}
+.step-item.active .num{background:var(--accent);color:var(--navy);}
+.step-item.done .num{background:var(--green);color:var(--white);}
+.step-role-tag{
+  font-size:.52rem;padding:1px 7px;border:1px solid;
+  font-family:'Space Mono',monospace;letter-spacing:.05em;
+}
+.tag-seeker{color:#4cd48a;border-color:rgba(76,212,138,.4);background:rgba(76,212,138,.06);}
+.tag-owner {color:var(--accent2);border-color:var(--bora);background:var(--adim);}
+.tag-both  {color:var(--cyan);border-color:rgba(74,184,212,.4);background:rgba(74,184,212,.06);}
+
+.step-title{font-size:.9rem;font-weight:700;margin-bottom:4px;}
+.step-action{font-size:.76rem;color:var(--gray);line-height:1.55;}
+
+/* アクションボタン */
+.step-btns{display:flex;gap:8px;margin-top:10px;}
+.btn-next{
+  padding:7px 18px;background:var(--accent);color:var(--navy);
+  font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;
+  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));
+  transition:background .2s;
+}
+.btn-next:hover{background:var(--accent2);}
+.btn-open{
+  padding:7px 14px;background:transparent;color:var(--gray);
+  font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.08em;
+  text-transform:uppercase;border:1px solid var(--border);cursor:pointer;transition:all .2s;
+}
+.btn-open:hover{border-color:var(--bora);color:var(--accent);}
+
+/* 話者メモ */
+.speaker-note{
+  padding:12px 16px;background:rgba(74,184,212,.06);border-left:2px solid var(--cyan);
+  margin-top:10px;
+}
+.speaker-note-label{
+  font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:5px;
+}
+.speaker-note-text{font-size:.78rem;color:rgba(168,232,255,.8);line-height:1.65;}
+
+/* ── RIGHT PANEL（デモ画面） ── */
+.demo-panel{display:flex;flex-direction:column;background:var(--navy);}
+.demo-toolbar{
+  display:flex;align-items:center;gap:12px;padding:10px 16px;
+  background:rgba(14,21,32,.9);border-bottom:1px solid var(--border);flex-shrink:0;height:44px;
+}
+.url-bar{
+  flex:1;background:var(--steel);border:1px solid var(--border);
+  padding:5px 14px;font-family:'Space Mono',monospace;font-size:.62rem;
+  color:var(--gray);display:flex;align-items:center;gap:8px;
+}
+.url-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.url-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tb-btn{
+  padding:4px 10px;background:transparent;border:1px solid var(--border);
+  color:var(--gray);font-family:'Space Mono',monospace;font-size:.54rem;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--bora);color:var(--accent);}
+
+.demo-frame-wrap{flex:1;position:relative;overflow:hidden;}
+.demo-frame{
+  width:100%;height:100%;border:none;
+  background:#fff;
+}
+
+/* ハイライトオーバーレイ */
+.highlight-overlay{
+  position:absolute;inset:0;pointer-events:none;z-index:10;
+  display:none;
+}
+.highlight-overlay.show{display:block;}
+.highlight-box{
+  position:absolute;border:3px solid var(--accent);
+  animation:hlPulse 1.5s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes hlPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(232,160,32,.4),0 0 20px rgba(232,160,32,.2);}
+  50%     {box-shadow:0 0 0 8px rgba(232,160,32,0),0 0 40px rgba(232,160,32,.15);}
+}
+.highlight-label{
+  position:absolute;background:var(--accent);color:var(--navy);
+  font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;
+  padding:4px 12px;white-space:nowrap;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+}
+
+/* ステップ完了アニメーション */
+.step-complete-toast{
+  position:fixed;bottom:32px;right:32px;
+  background:var(--green);color:var(--white);
+  font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;
+  padding:12px 24px;z-index:9999;
+  transform:translateY(80px);opacity:0;transition:all .4s ease;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+}
+.step-complete-toast.show{transform:translateY(0);opacity:1;}
+
+/* INTRO OVERLAY */
+.intro-overlay{
+  position:fixed;inset:0;background:rgba(5,10,18,.95);z-index:200;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px;transition:opacity .5s,visibility .5s;
+}
+.intro-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.intro-logo{font-family:'Space Mono',monospace;font-size:2rem;font-weight:700;letter-spacing:.25em;margin-bottom:12px;}
+.intro-logo span{color:var(--accent);}
+.intro-title{font-size:1.5rem;font-weight:700;margin-bottom:8px;}
+.intro-sub{font-size:.9rem;color:var(--gray);margin-bottom:40px;line-height:1.7;}
+.intro-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:580px;width:100%;margin-bottom:36px;}
+.intro-card{
+  padding:24px 20px;border:1px solid var(--border);cursor:pointer;
+  transition:all .25s;background:var(--card);text-align:left;
+}
+.intro-card:hover{border-color:var(--bora);background:var(--adim);}
+.intro-card-icon{font-size:1.8rem;margin-bottom:10px;}
+.intro-card-title{font-size:1rem;font-weight:700;margin-bottom:4px;}
+.intro-card-desc{font-size:.78rem;color:var(--gray);line-height:1.6;}
+.intro-start{
+  padding:12px 40px;background:var(--accent);color:var(--navy);
+  font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;border:none;cursor:pointer;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+  transition:background .2s;
+}
+.intro-start:hover{background:var(--accent2);}
+</style>
+</head>
+<body>
+
+<!-- イントロ選択画面 -->
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-logo">MA<span>RE</span></div>
+  <h1 class="intro-title">デモシナリオを選んでください</h1>
+  <p class="intro-sub">どちらの立場でデモを進めますか？<br>それぞれ実際のサイトを操作しながら体験できます。</p>
+  <div class="intro-cards">
+    <div class="intro-card" onclick="startDemo('seeker')">
+      <div class="intro-card-icon">🔧</div>
+      <div class="intro-card-title">設備を借りたい</div>
+      <div class="intro-card-desc">中小製造業の経営者として、必要な設備を探し、申請・契約するまでのフローを体験</div>
+    </div>
+    <div class="intro-card" onclick="startDemo('owner')">
+      <div class="intro-card-icon">🏭</div>
+      <div class="intro-card-title">設備を貸したい</div>
+      <div class="intro-card-desc">設備オーナーとして、遊休設備を登録し、申請を受けて稼働するまでのフローを体験</div>
+    </div>
+  </div>
+  <button class="intro-start" onclick="startDemo('both')">両方まとめてデモする</button>
+</div>
+
+<!-- メインUI -->
+<header>
+  <div class="logo">MA<span>RE</span></div>
+  <div class="header-center">Demo Scenario Guide</div>
+  <div class="header-right">
+    <div class="mode-indicator" id="modeIndicator">— 未選択 —</div>
+    <button class="btn-reset" onclick="resetDemo()">最初から</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: シナリオパネル -->
+  <div class="scenario-panel">
+    <div class="role-tabs" id="roleTabs">
+      <button class="role-tab active" onclick="switchRole('seeker')" id="tabSeeker">借りる側</button>
+      <button class="role-tab" onclick="switchRole('owner')" id="tabOwner">貸す側</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progressLabel">進捗</span>
+        <span id="progressCount">0 / 0</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="steps-list" id="stepsList"></div>
+  </div>
+
+  <!-- RIGHT: デモ画面 -->
+  <div class="demo-panel">
+    <div class="demo-toolbar">
+      <button class="tb-btn" onclick="frameBack()">← 戻る</button>
+      <button class="tb-btn" onclick="frameRefresh()">↺ 更新</button>
+      <div class="url-bar">
+        <div class="url-dot"></div>
+        <div class="url-text" id="urlText">— ページを選んでください —</div>
+      </div>
+      <button class="tb-btn" onclick="openExternal()">別タブで開く ↗</button>
+    </div>
+    <div class="demo-frame-wrap">
+      <iframe class="demo-frame" id="demoFrame" src="about:blank"></iframe>
+      <div class="highlight-overlay" id="highlightOverlay"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="step-complete-toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════
+// デモシナリオ定義
+// ════════════════════════════════════════════════════
+const SCENARIOS = {
+
+  seeker: [
+    {
+      num:'01', title:'MAREを知る',
+      role:'seeker', tag:'借りる側',
+      action:'トップページを開き、MAREのサービス概要を確認します。',
+      url:'oem_platform.html',
+      speakerNote:'「御社のように設備投資を抑えたい企業に向けたサービスです」と一言添えてから画面を見せましょう。ヒーローの「眠る設備を、稼働資産へ」というコピーが刺さりやすいです。',
+    },
+    {
+      num:'02', title:'設備を探す',
+      role:'seeker', tag:'借りる側',
+      action:'「設備を探してみる」ボタンをクリックして検索ページへ移動します。',
+      url:'mare_search.html',
+      speakerNote:'フィルターで「エリア：近畿」「賃借料：〜¥50万」に絞ると、近くの手頃な設備が絞り込まれます。カテゴリタブも触ってみてください。',
+    },
+    {
+      num:'03', title:'設備の詳細を確認',
+      role:'seeker', tag:'借りる側',
+      action:'「200t 油圧プレス機」のカードをクリックして詳細モーダルを開きます。',
+      url:'mare_search.html',
+      speakerNote:'スペック・賃借料・エリア・人材派遣有無を確認できます。「¥280,000 / 月」は正規設備投資と比べると大幅なコスト削減になることを強調しましょう。',
+    },
+    {
+      num:'04', title:'利用申請を送る',
+      role:'seeker', tag:'借りる側',
+      action:'モーダルの「この設備に申請する →」をクリックして申請します。',
+      url:'mare_search.html',
+      speakerNote:'申請後、トーストに「マイページで確認 →」が表示されます。これをクリックしてマイページへ移動します。',
+    },
+    {
+      num:'05', title:'マイページで進捗確認',
+      role:'seeker', tag:'借りる側',
+      action:'マイページを開き、申請したばかりの設備が「申請中」ステータスで表示されていることを確認します。',
+      url:'mare_mypage.html',
+      speakerNote:'カードをクリックして展開すると、STEP1「申請中」が現在のステップとして光っています。MARE担当者からのチャットメッセージのプレビューも見せましょう。',
+    },
+    {
+      num:'06', title:'見積もりを承認する',
+      role:'seeker', tag:'借りる側',
+      action:'「5軸マシニングセンタ」のカードを開き、見積もりカードの「承認する」をクリックします。',
+      url:'mare_mypage.html',
+      speakerNote:'「¥605,000 / 月」の見積もりカードが表示されています。「承認する」を押すとリアルタイムでステータスが「合意済」に更新されます。プラットフォーム内で全てが完結することを強調してください。',
+    },
+    {
+      num:'07', title:'稼働中の設備を確認',
+      role:'seeker', tag:'借りる側',
+      action:'「稼働中」タブをクリックして、既に稼働している設備と月次精算履歴を確認します。',
+      url:'mare_mypage.html',
+      speakerNote:'「200t 油圧プレス機」が稼働中で、毎月¥280,000の精算が自動で行われています。これが導入後の日常の管理画面です。',
+    },
+    {
+      num:'08', title:'無料登録でスタート',
+      role:'seeker', tag:'借りる側',
+      action:'「設備を探す・申請」ボタンから登録ページへ移動し、4ステップの登録フローを見せます。',
+      url:'mare_register.html',
+      speakerNote:'「今日から無料で始められます」と伝えてください。STEP1で「設備を借りたい」を選択し、ウィザードを進めます。登録は5分程度で完了します。',
+    },
+  ],
+
+  owner: [
+    {
+      num:'01', title:'MAREの仕組みを理解する',
+      role:'owner', tag:'貸す側',
+      action:'トップページのフロー図で「掲載→マッチング→見積→稼働・精算」の流れを確認します。',
+      url:'oem_platform.html',
+      speakerNote:'「御社の遊休設備が毎月収益を生む仕組みです」と伝えましょう。「掲載は無料・マッチング成立時のみ10%」が刺さります。',
+    },
+    {
+      num:'02', title:'設備オーナーとして登録する',
+      role:'owner', tag:'貸す側',
+      action:'「無料登録」から登録ページへ移動し、「設備を貸したい」を選択します。',
+      url:'mare_register.html',
+      speakerNote:'STEP1で「設備を貸したい」を選択するとオーナー向けの設備情報入力欄が出てきます。写真アップロード・月額賃借料・人材派遣対応有無を入力できます。',
+    },
+    {
+      num:'03', title:'掲載後の申請受付を確認',
+      role:'owner', tag:'貸す側',
+      action:'マイページを開き、右下の「オーナー」タブに切り替えます。',
+      url:'mare_mypage.html',
+      speakerNote:'「オーナー」ビューに切り替えると、貸し出し中の「200t 油圧プレス機」と調整中の「スポット溶接機」が表示されます。',
+    },
+    {
+      num:'04', title:'申請内容をMAREと調整',
+      role:'owner', tag:'貸す側',
+      action:'「スポット溶接機」のカードを展開し、合意済みのステップと契約書作成中のステータスを確認します。',
+      url:'mare_mypage.html',
+      speakerNote:'「STEP3 合意済」が現在のステップです。MARE担当者が契約書を作成中——つまり、オーナー側は待つだけ。この手間の少なさが差別化ポイントです。',
+    },
+    {
+      num:'05', title:'毎月の入金履歴を確認',
+      role:'owner', tag:'貸す側',
+      action:'「200t 油圧プレス機」を展開し、毎月¥252,000（手数料10%控除後）の入金履歴を確認します。',
+      url:'mare_mypage.html',
+      speakerNote:'¥280,000 × 90% = ¥252,000 が毎月自動入金されます。設備が稼働している限り、継続的な収益になります。',
+    },
+    {
+      num:'06', title:'借り手が設備を探す側を体験',
+      role:'owner', tag:'貸す側',
+      action:'「借りる側」タブに切り替え、自社の設備がどのように表示されているか確認します。',
+      url:'mare_search.html',
+      speakerNote:'「設備オーナーが登録した情報はこう見えます」と伝えながら、カードの写真・スペック・賃借料表示を見せましょう。借り手の視点で見ることで、掲載内容の重要性が伝わります。',
+    },
+  ],
+};
+
+// ════════════════════════════════════════════════════
+// 状態管理
+// ════════════════════════════════════════════════════
+let currentRole = 'seeker';
+let currentStep = 0;
+let stepDone    = { seeker: [], owner: [] };
+
+// ════════════════════════════════════════════════════
+// 初期化
+// ════════════════════════════════════════════════════
+function startDemo(role) {
+  document.getElementById('introOverlay').classList.add('hidden');
+  if (role === 'both') {
+    currentRole = 'seeker';
+  } else {
+    currentRole = role;
+    document.getElementById('tabSeeker').style.display = role === 'owner' ? 'none' : '';
+    document.getElementById('tabOwner').style.display  = role === 'seeker' ? 'none' : '';
+  }
+  updateModeIndicator();
+  renderSteps();
+  goStep(0);
+}
+
+function resetDemo() {
+  currentStep = 0;
+  stepDone = { seeker:[], owner:[] };
+  document.getElementById('demoFrame').src = 'about:blank';
+  document.getElementById('urlText').textContent = '— ページを選んでください —';
+  document.getElementById('introOverlay').classList.remove('hidden');
+  document.getElementById('tabSeeker').style.display = '';
+  document.getElementById('tabOwner').style.display = '';
+}
+
+function updateModeIndicator() {
+  const labels = { seeker:'借りる側デモ', owner:'貸す側デモ', both:'両方デモ' };
+  document.getElementById('modeIndicator').textContent = labels[currentRole] || '—';
+}
+
+// ════════════════════════════════════════════════════
+// ロール切り替え
+// ════════════════════════════════════════════════════
+function switchRole(role) {
+  currentRole = role;
+  currentStep = 0;
+  document.getElementById('tabSeeker').classList.toggle('active', role === 'seeker');
+  document.getElementById('tabOwner').classList.toggle('active', role === 'owner');
+  updateModeIndicator();
+  renderSteps();
+  goStep(0);
+}
+
+// ════════════════════════════════════════════════════
+// ステップレンダリング
+// ════════════════════════════════════════════════════
+function renderSteps() {
+  const steps = SCENARIOS[currentRole];
+  const done  = stepDone[currentRole] || [];
+  const list  = document.getElementById('stepsList');
+
+  list.innerHTML = steps.map((s, i) => {
+    const isDone    = done.includes(i);
+    const isCurrent = i === currentStep;
+    const cls = isDone ? 'done' : isCurrent ? 'active' : '';
+    const tagCls = { seeker:'tag-seeker', owner:'tag-owner', both:'tag-both' }[s.role] || 'tag-seeker';
+
+    return `
+    <div class="step-item ${cls}" id="step-${i}" onclick="goStep(${i})">
+      <div class="step-num">
+        <div class="num">${isDone ? '✓' : s.num}</div>
+        <span class="step-role-tag ${tagCls}">${s.tag}</span>
+      </div>
+      <div class="step-title">${s.title}</div>
+      <div class="step-action">${s.action}</div>
+      ${isCurrent ? `
+        <div class="step-btns">
+          <button class="btn-next" onclick="event.stopPropagation();completeStep()">次へ →</button>
+          <button class="btn-open" onclick="event.stopPropagation();openExternal()">別タブ ↗</button>
+        </div>
+        ${s.speakerNote ? `
+        <div class="speaker-note">
+          <div class="speaker-note-label">話者メモ</div>
+          <div class="speaker-note-text">${s.speakerNote}</div>
+        </div>` : ''}
+      ` : ''}
+    </div>`;
+  }).join('');
+
+  // プログレス更新
+  const pct = done.length / steps.length * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCount').textContent = done.length + ' / ' + steps.length;
+  document.getElementById('progressLabel').textContent = currentRole === 'seeker' ? '借りる側の進捗' : '貸す側の進捗';
+}
+
+// ════════════════════════════════════════════════════
+// ステップ移動
+// ════════════════════════════════════════════════════
+function goStep(idx) {
+  const steps = SCENARIOS[currentRole];
+  if (idx < 0 || idx >= steps.length) return;
+  currentStep = idx;
+  renderSteps();
+  loadUrl(steps[idx].url);
+
+  // スクロールして表示
+  setTimeout(() => {
+    const el = document.getElementById('step-' + idx);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 100);
+}
+
+function completeStep() {
+  const steps = SCENARIOS[currentRole];
+  if (!stepDone[currentRole]) stepDone[currentRole] = [];
+  if (!stepDone[currentRole].includes(currentStep)) {
+    stepDone[currentRole].push(currentStep);
+  }
+  showToast('STEP ' + steps[currentStep].num + ' 完了！');
+
+  if (currentStep < steps.length - 1) {
+    goStep(currentStep + 1);
+  } else {
+    // 全ステップ完了
+    renderSteps();
+    showToast('🎉 デモ完了！お疲れ様でした。');
+  }
+}
+
+// ════════════════════════════════════════════════════
+// iframe操作
+// ════════════════════════════════════════════════════
+function loadUrl(url) {
+  const frame = document.getElementById('demoFrame');
+  frame.src = url;
+  document.getElementById('urlText').textContent = url;
+}
+
+function frameBack() {
+  document.getElementById('demoFrame').contentWindow.history.back();
+}
+
+function frameRefresh() {
+  document.getElementById('demoFrame').contentWindow.location.reload();
+}
+
+function openExternal() {
+  const steps = SCENARIOS[currentRole];
+  const url = steps[currentStep]?.url;
+  if (url) window.open(url, '_blank');
+}
+
+// ════════════════════════════════════════════════════
+// トースト
+// ════════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// キーボードショートカット
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); completeStep(); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); goStep(currentStep - 1); }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>よくあるご質問（FAQ）— MARE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0e1520;--navy2:#131c2b;--steel:#1a2840;
+  --accent:#e8a020;--accent2:#f0c060;--adim:rgba(232,160,32,.12);
+  --cyan:#4ab8d4;--green:#27ae72;--purple:#534ab7;
+  --white:#fff;--gray:rgba(255,255,255,.56);
+  --border:rgba(255,255,255,.08);--bora:rgba(232,160,32,.26);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+a,a:link,a:visited{text-decoration:none;color:inherit;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 48px;background:rgba(14,21,32,.96);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:.95rem;font-weight:700;letter-spacing:.18em;color:var(--white)!important;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:24px;list-style:none;}
+.nav-links a{font-family:'Space Mono',monospace;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85)!important;transition:color .2s;}
+.nav-links a:hover{color:var(--accent2)!important;}
+.nav-cta{padding:7px 16px;background:var(--accent);color:var(--navy)!important;font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));transition:background .2s;}
+.nav-cta:hover{background:var(--accent2)!important;}
+
+/* HERO */
+.faq-hero{padding:64px 48px 40px;text-align:center;border-bottom:1px solid var(--border);}
+.faq-hero-tag{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:12px;}
+.faq-hero-tag::before,.faq-hero-tag::after{content:'';flex:1;max-width:60px;height:1px;background:var(--accent);}
+.faq-hero-title{font-size:2.2rem;font-weight:700;line-height:1.25;margin-bottom:14px;}
+.faq-hero-title em{color:var(--accent);font-style:normal;}
+.faq-hero-desc{font-size:.9rem;color:var(--gray);line-height:1.8;max-width:560px;margin:0 auto 28px;}
+.faq-tab-wrap{display:flex;justify-content:center;gap:0;border:1px solid var(--border);width:fit-content;margin:0 auto;}
+.faq-tab{padding:10px 32px;font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;background:transparent;border:none;color:var(--gray);transition:all .2s;position:relative;}
+.faq-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);opacity:0;transition:opacity .2s;}
+.faq-tab.active{color:var(--accent);background:var(--adim);}
+.faq-tab.active::after{opacity:1;}
+.faq-tab:first-child{border-right:1px solid var(--border);}
+
+/* MAIN */
+.faq-wrap{max-width:800px;margin:0 auto;padding:40px 24px 80px;}
+
+.faq-section{display:none;}
+.faq-section.show{display:block;}
+
+.faq-section-header{margin-bottom:28px;}
+.faq-section-role{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;}
+.faq-section-role.owner{color:var(--cyan);}
+.faq-section-role.seeker{color:var(--accent);}
+.faq-section-title{font-size:1.2rem;font-weight:700;margin-bottom:6px;}
+.faq-section-desc{font-size:.84rem;color:var(--gray);line-height:1.7;}
+
+/* FAQ アイテム */
+.faq-item{border:1px solid var(--border);margin-bottom:8px;transition:border-color .2s;}
+.faq-item:hover{border-color:var(--bora);}
+.faq-item.open{border-color:var(--bora);background:rgba(232,160,32,.04);}
+.faq-q{display:flex;align-items:flex-start;gap:14px;padding:18px 20px;cursor:pointer;user-select:none;}
+.faq-q-num{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;color:var(--accent);flex-shrink:0;padding-top:2px;}
+.faq-q-text{font-size:.92rem;font-weight:500;line-height:1.55;flex:1;}
+.faq-q-icon{font-family:'Space Mono',monospace;font-size:.9rem;color:var(--gray);flex-shrink:0;transition:transform .25s;padding-top:2px;}
+.faq-item.open .faq-q-icon{transform:rotate(45deg);color:var(--accent);}
+.faq-a{display:none;padding:0 20px 18px 48px;}
+.faq-item.open .faq-a{display:block;}
+.faq-a-text{font-size:.86rem;color:rgba(255,255,255,.72);line-height:1.85;border-left:2px solid var(--bora);padding-left:14px;}
+
+/* 区切り */
+.section-divider{height:1px;background:var(--border);margin:40px 0;}
+
+/* CTA */
+.faq-cta{background:var(--navy2);border:1px solid var(--border);border-top:2px solid var(--accent);padding:28px 32px;text-align:center;margin-top:48px;}
+.faq-cta-title{font-size:1rem;font-weight:700;margin-bottom:8px;}
+.faq-cta-desc{font-size:.84rem;color:var(--gray);line-height:1.7;margin-bottom:18px;}
+.faq-cta-btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}
+.btn-primary{padding:9px 22px;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));transition:background .2s;display:inline-block;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-ghost{padding:9px 22px;background:transparent;color:rgba(255,255,255,.75);font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);display:inline-block;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--bora);color:var(--accent);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="oem_platform.html" class="nav-logo">MA<span>RE</span></a>
+  <ul class="nav-links">
+    <li><a href="oem_platform.html">トップ</a></li>
+    <li><a href="mare_search.html">設備を探す</a></li>
+    <li><a href="philosophy.html">理念</a></li>
+  </ul>
+  <a href="mare_register.html" class="nav-cta">無料登録 →</a>
+</nav>
+
+<div class="faq-hero">
+  <div class="faq-hero-tag">FAQ</div>
+  <h1 class="faq-hero-title">よくある<em>ご質問</em></h1>
+  <p class="faq-hero-desc">設備オーナー・借り受け企業それぞれの立場からよく寄せられる質問をまとめました。</p>
+  <div class="faq-tab-wrap">
+    <button class="faq-tab active" onclick="switchFaq('owner')">🏭 設備オーナーの方</button>
+    <button class="faq-tab" onclick="switchFaq('seeker')">🔧 借り受け企業の方</button>
+  </div>
+</div>
+
+<div class="faq-wrap">
+
+  <!-- ── オーナー向け ── -->
+  <div class="faq-section show" id="faq-owner">
+    <div class="faq-section-header">
+      <div class="faq-section-role owner">For Equipment Owners</div>
+      <div class="faq-section-title">設備オーナーの方へ</div>
+      <div class="faq-section-desc">遊休設備の登録から、マッチング・精算まで、よくいただく質問にお答えします。</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q01</span><span class="faq-q-text">設備を登録するのに費用はかかりますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">掲載登録は完全無料です。費用が発生するのは、マッチングが成立して取引が確定した時点のみです。手数料は取引額の5〜15%で、ご利用状況に応じて別途ご案内します。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q02</span><span class="faq-q-text">どのような設備でも登録できますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">食品製造・加工に関連する設備を中心に受け付けています（プレス機・CNC・溶接・包装ライン等）。登録後にMAREスタッフが内容を確認し、掲載可否をご連絡します。安全基準を満たしていない設備や違法改造が疑われる設備は掲載できません。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q03</span><span class="faq-q-text">賃借料は自分で決められますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">はい、基本的にはオーナー様が希望額を設定できます。ただし、MARE担当者が市場相場をもとにアドバイスを行い、借り受け企業との交渉を経て最終金額が確定します。相場から大きく外れた金額はマッチングが成立しにくくなる場合があります。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q04</span><span class="faq-q-text">設備の搬出・搬入はどうなりますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">搬入・搬出の日程調整はMAREが仲介します。搬送費用については、見積もり段階で借り受け企業負担とするか折半とするかを交渉できます。大型設備の場合は専門の運搬業者を手配するサポートも行っています。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q05</span><span class="faq-q-text">設備が破損した場合の補償はありますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">契約書第9条・第12条に基づき、借り受け企業（発注者）が設備の破損・紛失について修理費または同等品代替費用を負担します。万が一のトラブルに備え、契約締結前に設備の現状写真や動作確認記録をMAREと共有しておくことを推奨しています。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q06</span><span class="faq-q-text">貸し出し期間中に自社で設備が必要になったらどうなりますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">契約期間中の中途解約は原則できません。貸し出し開始前に利用可能な期間を明確に設定してから登録をお願いします。ただし、借り受け企業との合意があれば期間変更・早期終了の交渉をMAREが仲介することも可能です。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q07</span><span class="faq-q-text">支払いはいつ、どのように受け取れますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">毎月末日締め・翌月払いを基本としています。MAREが発注者から代金を回収後、手数料を控除した金額をオーナー様の指定口座へ振り込みます。入金履歴はマイページの「入金履歴」タブでリアルタイムに確認できます。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q08</span><span class="faq-q-text">複数の設備を同時に登録できますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">はい、設備ごとに個別登録が可能です。台数の上限は設けていませんので、遊休設備を一括して掲載いただけます。各設備ごとに貸出期間・価格・条件を個別に設定できます。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q09</span><span class="faq-q-text">借り受け企業の信頼性はどのように確認できますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">MARE登録時に企業情報の審査を行っています。また、申請から合意に至るまでのチャットでMAREが間に入り、発注者の目的・利用計画を確認します。不審な点があった場合はMAREがマッチングを停止することができます。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q10</span><span class="faq-q-text">秘密保持契約（NDA）は結べますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">本規約第10条において秘密保持義務が定められており、契約終了後3年間有効です。さらに個別に強固なNDAを締結したい場合は、MARE担当者にご相談ください。別途個別NDAの締結サポートも行っています。</p></div>
+    </div>
+  </div>
+
+  <!-- ── 借り受け企業向け ── -->
+  <div class="faq-section" id="faq-seeker">
+    <div class="faq-section-header">
+      <div class="faq-section-role seeker">For Equipment Seekers</div>
+      <div class="faq-section-title">借り受け企業の方へ</div>
+      <div class="faq-section-desc">設備の探し方・申請フロー・費用感など、初めての方からよくいただく質問にお答えします。</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q01</span><span class="faq-q-text">登録・利用の費用はいくらかかりますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">会員登録・設備検索・申請は無料です。費用が発生するのはマッチングが成立し取引が確定した後のみです。手数料は取引額に応じて5〜15%が設定されており、見積もり時に明示されます。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q02</span><span class="faq-q-text">申請してからどのくらいで利用できますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">申請後、MARE担当者が48時間以内に確認の連絡をします。その後、見積もり調整・合意・電子契約を経て搬入となります。スムーズに進んだ場合、申請から稼働まで最短2〜3週間程度を見込んでください。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q03</span><span class="faq-q-text">短期間（1〜2ヶ月）だけの利用はできますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">はい、短期利用に対応している設備もあります。各設備の掲載ページに貸出可能期間が記載されています。短期・スポット利用の希望は申請時のチャットでMAREにお伝えください。オーナーと条件交渉を仲介します。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q04</span><span class="faq-q-text">設備を実際に見学してから申請できますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">はい、可能です。申請後のチャットでMAREを通じて見学のリクエストができます。見学時はMAREスタッフが立ち会うか、スケジュール調整を代行します。見学後にキャンセルする場合もペナルティはありません。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q05</span><span class="faq-q-text">設備の操作に不安があります。サポートはありますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">MARE経由でオペレーターや技術者の手配が可能です（別途費用）。操作マニュアルや動画リソースの提供もオーナーに依頼できます。搬入時の試運転立ち会いもMAREがサポートします。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q06</span><span class="faq-q-text">製造した商品の知的財産権はどうなりますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">本規約第11条に基づき、商品およびブランドに関する権利は原則として発注者（借り受け企業）に帰属します。オーナーの製造技術・ノウハウはオーナー側に帰属し、あなたの商品設計や仕様が無断で流用されることはありません。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q07</span><span class="faq-q-text">契約後にキャンセルはできますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">電子契約締結前であればキャンセル可能です（マイページの「キャンセル」ボタンから申請）。契約締結後の解約は30日前までにMAREプラットフォーム上で申請が必要です。解約条件の詳細は契約書第15条をご確認ください。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q08</span><span class="faq-q-text">支払い方法は何が使えますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">現在はクレジットカード・銀行振込に対応しています。毎月末日締め・翌月払いが基本となり、MAREプラットフォーム内で決済が完結します。領収書・請求書の発行にも対応しています。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q09</span><span class="faq-q-text">設備に不具合が発生した場合はどうなりますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">まずMAREのチャットを通じて担当者に報告してください。MAREがオーナーと連絡を取り、修理・代替対応を調整します。借り受け企業の過失によらない不具合の場合、修理費用の負担については契約内容をもとにMAREが仲介します。</p></div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-q-num">Q10</span><span class="faq-q-text">北陸以外の設備も借りられますか？</span><span class="faq-q-icon">+</span></div>
+      <div class="faq-a"><p class="faq-a-text">MAREは北陸地方（石川・富山・福井）を中心にサービスを展開していますが、全国の設備オーナーからの登録も受け付けています。遠方の設備については搬送費用が別途発生します。希望エリアや条件は申請時にご相談ください。</p></div>
+    </div>
+  </div>
+
+  <div class="faq-cta">
+    <div class="faq-cta-title">解決しない場合は、直接ご相談ください</div>
+    <div class="faq-cta-desc">MAREの担当者が丁寧にご対応します。まずは無料登録からお気軽にどうぞ。</div>
+    <div class="faq-cta-btns">
+      <a href="mare_register.html" class="btn-primary">無料登録・お問い合わせ →</a>
+      <a href="oem_platform.html" class="btn-ghost">トップに戻る</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchFaq(role) {
+  document.querySelectorAll('.faq-section').forEach(s => s.classList.remove('show'));
+  document.getElementById('faq-' + role).classList.add('show');
+  document.querySelectorAll('.faq-tab').forEach(t => t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

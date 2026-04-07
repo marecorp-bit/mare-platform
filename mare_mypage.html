@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マイページ — MARE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+
+:root{--navy:#0e1520;--navy2:#131c2b;--steel:#1e2d42;--mid:#253d5a;--accent:#e8a020;--accent2:#f0c060;--adim:rgba(232,160,32,.14);--cyan:#4ab8d4;--green:#27ae72;--red:#e05555;--white:#fff;--gray:rgba(255,255,255,.55);--border:rgba(255,255,255,.08);--bora:rgba(232,160,32,.28);--card:rgba(255,255,255,.04);--s-applying:#0f6e56;--s-estimating:#ba7517;--s-agreed:#534ab7;--s-contracted:#185fa5;--s-active:#27ae72;--s-done:#4a5568;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+a,a:link,a:visited,a:hover,a:active{text-decoration:none;color:inherit;}
+.nav-links a,.nav-links a:link,.nav-links a:visited{color:rgba(255,255,255,.85)!important;}
+.nav-links a:hover{color:var(--accent2)!important;}
+.nav-logo,.nav-logo:link,.nav-logo:visited{color:var(--white)!important;}
+.nav-cta,.nav-cta:link,.nav-cta:visited{color:var(--navy)!important;}
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 44px;background:rgba(14,21,32,.96);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:.96rem;font-weight:700;letter-spacing:.18em;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:26px;list-style:none;}
+.nav-links a{font-family:'Space Mono',monospace;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;transition:color .2s;color:rgba(255,255,255,.82);}
+.nav-cta{padding:8px 18px;background:var(--accent);font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:background .2s;}
+.nav-cta:hover{background:var(--accent2)!important;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-bell{position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);transition:border-color .2s;}
+.nav-bell:hover{border-color:var(--bora);}
+.nav-bell svg{width:14px;height:14px;stroke:var(--gray);fill:none;stroke-width:1.5;}
+.bell-badge{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--accent);border-radius:50%;}
+.nav-user{display:flex;align-items:center;gap:8px;padding:5px 11px;background:var(--steel);border:1px solid var(--border);}
+.nav-avatar{width:22px;height:22px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;color:var(--navy);}
+.nav-user-name{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--gray);}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 53px);}
+/* SIDEBAR */
+.sidebar{background:var(--navy2);border-right:1px solid var(--border);padding:18px 0;position:sticky;top:53px;height:calc(100vh - 53px);display:flex;flex-direction:column;}
+.sidebar-section{padding:0 12px;margin-bottom:6px;}
+.sidebar-label{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:0 8px;margin-bottom:5px;}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:9px 8px;font-size:.82rem;color:var(--gray);cursor:pointer;border-left:2px solid transparent;transition:all .2s;text-decoration:none!important;color:var(--gray)!important;}
+.sidebar-item:hover{color:var(--white)!important;background:rgba(255,255,255,.03);}
+.sidebar-item.active{color:var(--accent)!important;border-left-color:var(--accent);background:var(--adim);}
+.sidebar-badge{margin-left:auto;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.48rem;font-weight:700;padding:1px 5px;min-width:15px;text-align:center;}
+.sidebar-divider{height:1px;background:var(--border);margin:8px 12px;}
+.sidebar-role-switcher{margin-top:auto;padding:12px;}
+.role-switch-label{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:6px;}
+.role-btns{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.role-btn{padding:7px 4px;font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.04em;text-align:center;cursor:pointer;background:var(--steel);color:var(--gray);transition:all .2s;border:none;}
+.role-btn.active{background:var(--accent);color:var(--navy);font-weight:700;}
+/* MAIN */
+.main{padding:26px 30px;}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
+.page-header-left h1{font-size:1.35rem;font-weight:700;margin-bottom:3px;}
+.page-header-left p{font-size:.8rem;color:var(--gray);}
+.btn-new{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;transition:background .2s;}
+.btn-new:hover{background:var(--accent2);}
+/* SAMPLE BANNER */
+.sample-banner{background:rgba(232,160,32,.09);border:1px solid var(--bora);border-left:4px solid var(--accent);padding:11px 15px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
+.sample-banner-title{font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:2px;}
+.sample-banner-desc{font-size:.78rem;color:rgba(255,255,255,.62);line-height:1.6;}
+/* SUMMARY */
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:20px;}
+.summary-card{background:var(--card);border:1px solid var(--border);padding:13px 15px;}
+.summary-num{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--accent);display:block;line-height:1;margin-bottom:3px;}
+.summary-label{font-size:.72rem;color:var(--gray);}
+/* FILTER TABS */
+.filter-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.ftab{padding:8px 14px;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;margin-bottom:-1px;transition:all .2s;}
+.ftab:hover{color:var(--white);}
+.ftab.active{color:var(--accent);border-bottom-color:var(--accent);}
+/* APP CARD */
+.applications{display:flex;flex-direction:column;gap:11px;}
+.app-card{background:var(--card);border:1px solid var(--border);transition:border-color .3s;}
+.app-card:hover{border-color:var(--bora);}
+
+.app-card-header{display:flex;align-items:center;padding:13px 17px 11px;cursor:pointer;}
+.status-bar{width:4px;height:48px;margin-right:13px;flex-shrink:0;}
+.equip-img{width:60px;height:48px;object-fit:cover;filter:saturate(.6) brightness(.8);margin-right:13px;flex-shrink:0;}
+.app-info{flex:1;min-width:0;}
+.app-name{font-size:.94rem;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.app-maker{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--cyan);}
+.app-meta{display:flex;align-items:center;gap:12px;margin-left:auto;flex-shrink:0;}
+.app-badge{font-family:'Space Mono',monospace;font-size:.54rem;font-weight:700;letter-spacing:.08em;padding:3px 9px;border:1px solid;}
+.app-period{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--gray);}
+.app-price{font-family:'Space Mono',monospace;font-size:.86rem;font-weight:700;color:var(--accent);}
+.cancel-btn{padding:3px 9px;background:transparent;border:1px solid rgba(224,85,85,.35);color:rgba(224,85,85,.65);font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.05em;cursor:pointer;transition:all .2s;margin-left:7px;}
+.cancel-btn:hover{border-color:#e05555;color:#e05555;}
+.chevron{width:14px;height:14px;color:var(--gray);transition:transform .25s;margin-left:8px;flex-shrink:0;}
+.app-card.expanded .chevron{transform:rotate(180deg);}
+/* STATUS CONTENT */
+.sc{padding:20px;}
+.sc-label{font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;}
+/* EQUIP DETAIL */
+.equip-detail{display:grid;grid-template-columns:170px 1fr;gap:18px;background:var(--steel);border:1px solid var(--border);padding:14px;margin-bottom:18px;}
+.equip-detail img{width:100%;height:110px;object-fit:cover;filter:saturate(.7);}
+.equip-detail-name{font-size:.96rem;font-weight:700;margin-bottom:5px;}
+.equip-detail-maker{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--cyan);margin-bottom:9px;}
+.spec-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px;}
+.spec-tag{font-family:'Space Mono',monospace;font-size:.54rem;padding:2px 7px;background:var(--navy);border:1px solid var(--border);color:var(--gray);}
+.detail-row{display:flex;gap:7px;font-size:.78rem;margin-bottom:4px;}
+.detail-lbl{color:var(--gray);white-space:nowrap;}
+/* CHAT */
+.chat-wrap{border:1px solid var(--border);}
+.chat-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);}
+.chat-title{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:7px;}
+.chat-title::before{content:'';width:12px;height:1px;background:var(--accent);}
+.online{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--green);display:flex;align-items:center;gap:4px;}
+.online-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:op 2s infinite;}
+@keyframes op{0%,100%{opacity:1}50%{opacity:.3}}
+.chat-msgs{height:240px;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border);}
+.cmsg{display:flex;flex-direction:column;max-width:82%;}
+.cmsg.mare{align-self:flex-start;}
+.cmsg.me{align-self:flex-end;}
+.cmsg-from{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.04em;margin-bottom:2px;}
+.cmsg.mare .cmsg-from{color:var(--accent);}
+.cmsg.me   .cmsg-from{color:var(--cyan);text-align:right;}
+.cmsg-bubble{padding:7px 11px;font-size:.8rem;line-height:1.65;}
+.cmsg.mare .cmsg-bubble{background:var(--steel);border:1px solid var(--border);border-left:2px solid var(--accent);}
+.cmsg.me   .cmsg-bubble{background:rgba(74,184,212,.1);border:1px solid rgba(74,184,212,.2);border-right:2px solid var(--cyan);}
+.cmsg-time{font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.18);margin-top:2px;}
+.cmsg.me .cmsg-time{text-align:right;}
+.cmsg-sys{align-self:center;font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.26);background:rgba(255,255,255,.03);border:1px solid var(--border);padding:4px 11px;text-align:center;}
+.cmsg-status{align-self:center;font-family:'Space Mono',monospace;font-size:.54rem;color:var(--accent);background:var(--adim);border:1px solid var(--bora);padding:5px 13px;text-align:center;}
+.chat-input{border-top:1px solid var(--border);background:var(--navy2);}
+.chat-toolbar{display:flex;gap:2px;padding:5px 9px;border-bottom:1px solid var(--border);}
+.ct-btn{width:24px;height:24px;background:none;border:none;color:var(--gray);cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;border-radius:2px;transition:color .2s;}
+.ct-btn:hover{color:var(--accent);background:var(--adim);}
+.chat-row{display:flex;align-items:flex-end;}
+.chat-ta{flex:1;background:transparent;border:none;color:var(--white);font-family:'Noto Sans JP',sans-serif;font-size:.82rem;padding:9px 13px;resize:none;outline:none;min-height:38px;max-height:96px;line-height:1.6;}
+.chat-ta::placeholder{color:rgba(255,255,255,.18);}
+.chat-send{padding:9px 15px;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;border:none;cursor:pointer;transition:background .2s;height:38px;white-space:nowrap;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%);}
+.chat-send:hover{background:var(--accent2);}
+/* ESTIMATE CARD */
+.est-card{margin:18px;border:1px solid var(--bora);background:var(--steel);}
+.est-head{background:var(--adim);padding:9px 15px;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--bora);}
+.est-body{padding:15px;}
+.est-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.est-row{display:flex;justify-content:space-between;font-size:.82rem;}
+.est-lbl{color:var(--gray);}
+.est-total{display:flex;justify-content:space-between;padding-top:9px;border-top:1px solid var(--border);margin-bottom:12px;}
+.est-total-lbl{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--gray);}
+.est-total-val{font-family:'Space Mono',monospace;font-size:.96rem;font-weight:700;color:var(--accent);}
+/* CONTRACT DOC */
+.contract-doc{margin:18px;border:1px solid var(--border);}
+.contract-doc-head{background:rgba(83,74,183,.13);border-bottom:1px solid rgba(83,74,183,.28);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;}
+.contract-doc-title{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:#afa9ec;}
+.contract-body{padding:18px;font-size:.82rem;line-height:2;color:rgba(255,255,255,.78);}
+.contract-body h3{font-size:.86rem;font-weight:700;margin:14px 0 7px;color:var(--white);}
+.contract-body table{width:100%;border-collapse:collapse;margin:8px 0 14px;}
+.contract-body td{padding:6px 11px;border:1px solid var(--border);font-size:.8rem;}
+.contract-body td:first-child{color:var(--gray);width:36%;background:rgba(255,255,255,.02);}
+.sign-area{border-top:1px solid var(--border);padding:18px;background:rgba(255,255,255,.015);}
+.sign-title{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:11px;}
+.sign-box{border:1px dashed var(--bora);padding:16px;margin-bottom:12px;min-height:70px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px;background:var(--navy);}
+.sign-placeholder{font-size:.8rem;color:rgba(255,255,255,.22);}
+.sign-done{font-family:'Space Mono',monospace;font-size:.86rem;font-weight:700;color:var(--green);}
+.sign-date{font-family:'Space Mono',monospace;font-size:.54rem;color:rgba(255,255,255,.28);}
+/* STAGE ACTION */
+.stage-area{border-top:1px solid var(--border);padding:14px 18px;background:rgba(255,255,255,.018);position:relative;z-index:5;}
+.stage-note{font-size:.76rem;color:var(--gray);margin-bottom:11px;line-height:1.65;}
+.stage-btns{display:flex;gap:9px;flex-wrap:wrap;}
+.s-btn{padding:10px 24px;font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;}
+.s-btn.primary{background:var(--accent);color:var(--navy);}
+.s-btn.primary:hover{background:var(--accent2);}
+.s-btn.green{background:var(--green);color:var(--white);}
+.s-btn.green:hover{opacity:.86;}
+.s-btn.outline{background:transparent;border:1px solid var(--border);color:var(--gray);clip-path:none;}
+.s-btn.outline:hover{border-color:var(--bora);color:var(--accent);}
+/* CONTRACT TAB */
+.contract-list-item{background:var(--steel);border:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.cli-info{display:flex;align-items:center;gap:11px;}
+.cli-name{font-size:.88rem;font-weight:700;margin-bottom:2px;}
+.cli-status{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--gray);}
+.cli-status.signed{color:var(--green);}
+.view-btn{padding:5px 13px;background:transparent;border:1px solid var(--bora);color:var(--accent);font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.07em;cursor:pointer;transition:all .2s;}
+.view-btn:hover{background:var(--adim);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--navy2);border:1px solid var(--border);max-width:400px;width:90%;animation:mIn .3s ease;}
+@keyframes mIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.modal-box.danger{border-top:3px solid var(--red);}
+.modal-box.info{border-top:3px solid var(--accent);}
+.modal-box.success{border-top:3px solid var(--green);}
+.modal-inner{padding:28px 26px 22px;}
+.modal-icon{font-size:1.7rem;text-align:center;margin-bottom:11px;}
+.modal-title{font-size:.98rem;font-weight:700;text-align:center;margin-bottom:7px;}
+.modal-desc{font-size:.8rem;color:var(--gray);text-align:center;line-height:1.7;margin-bottom:14px;}
+.modal-hl{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--accent2);text-align:center;padding:7px;background:var(--adim);border:1px solid var(--bora);margin-bottom:18px;}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.mbtn-yes{padding:10px;background:var(--green);color:var(--white);font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;border:none;cursor:pointer;transition:opacity .2s;}
+.mbtn-yes:hover{opacity:.84;}
+.mbtn-yes.danger{background:var(--red);}
+.mbtn-no{padding:10px;background:transparent;color:var(--gray);font-family:'Space Mono',monospace;font-size:.62rem;border:1px solid var(--border);cursor:pointer;transition:all .2s;}
+.mbtn-no:hover{border-color:var(--bora);color:var(--accent);}
+.modal-note{font-size:.68rem;color:rgba(255,255,255,.2);text-align:center;margin-top:11px;line-height:1.6;}
+/* NOTIF */
+.notif-panel{position:fixed;top:53px;right:0;width:290px;background:var(--navy2);border-left:1px solid var(--border);max-height:calc(100vh - 53px);overflow-y:auto;z-index:200;transform:translateX(100%);transition:transform .3s;}
+.notif-panel.open{transform:translateX(0);}
+.notif-head{padding:13px 15px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.notif-head-title{font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;}
+.notif-close{background:none;border:none;color:var(--gray);cursor:pointer;font-size:.96rem;}
+.notif-item{padding:11px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s;}
+.notif-item:hover{background:rgba(255,255,255,.03);}
+.notif-item.unread{border-left:2px solid var(--accent);}
+.notif-item-title{font-size:.8rem;font-weight:500;margin-bottom:2px;}
+.notif-item-desc{font-size:.72rem;color:var(--gray);line-height:1.5;margin-bottom:3px;}
+.notif-item-time{font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.2);}
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--steel);border:1px solid var(--bora);padding:10px 16px;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--accent);z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 40px;text-align:center;}
+.empty-icon{font-size:2.4rem;opacity:.28;margin-bottom:11px;}
+.empty-title{font-size:.94rem;font-weight:700;color:var(--gray);margin-bottom:4px;}
+.empty-desc{font-size:.78rem;color:rgba(255,255,255,.26);}
+
+
+.app-card.expanded 
+
+
+.app-body{display:none;border-top:1px solid var(--border);}
+
+</style>
+
+</head>
+<body>
+
+<!-- 通知パネル -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-head">
+    <span class="notif-head-title">通知</span>
+    <button class="notif-close" onclick="toggleNotif()">✕</button>
+  </div>
+  <div id="notifList"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="oem_platform.html" class="nav-logo">MA<span>RE</span></a>
+  <ul class="nav-links">
+    <li><a href="oem_platform.html">トップ</a></li>
+    <li><a href="mare_search.html">設備を探す</a></li>
+    <li><a href="philosophy.html">理念</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-bell" onclick="toggleNotif()">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="bell-badge" id="bellBadge" style="display:none"></span>
+    </div>
+    <div class="nav-user">
+      <div class="nav-avatar" id="navAvatar">借</div>
+      <span class="nav-user-name" id="navName">山田 太郎 様</span>
+    </div>
+    <a href="mare_register.html" class="nav-cta">無料登録 →</a>
+  </div>
+</nav>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">メニュー</div>
+      <a class="sidebar-item active" id="tabFlow" onclick="showTab('flow');return false;" href="#">
+        <span>📋</span>申請フロー<span class="sidebar-badge" id="flowBadge">1</span>
+      </a>
+      <a class="sidebar-item" id="tabContract" onclick="showTab('contract');return false;" href="#">
+        <span>📄</span>契約書<span class="sidebar-badge" id="contractBadge" style="display:none">0</span>
+      </a>
+      <a class="sidebar-item" id="tabUsers" onclick="showTab('users');return false;" href="#" style="display:none"><span>👥</span>ユーザー管理</a>
+      <a class="sidebar-item" href="#"><span>💬</span>チャット</a>
+      <a class="sidebar-item" href="#"><span>💰</span>請求・精算</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">設定</div>
+      <a class="sidebar-item" href="mare_register.html"><span>👤</span>アカウント</a>
+      <a class="sidebar-item" href="#"><span>🔔</span>通知設定</a>
+    </div>
+    <div class="sidebar-role-switcher">
+      <div class="role-switch-label">表示切り替え</div>
+      <div class="role-btns">
+        <button class="role-btn active" id="roleSeeker" data-role="seeker" onclick="switchRole('seeker')">借り受け</button>
+        <button class="role-btn" id="roleOwner" data-role="owner" onclick="switchRole('owner')">オーナー</button>
+        <button class="role-btn" id="roleAdmin" data-role="admin" onclick="switchRole('admin')" style="display:none">管理者</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="sample-banner">
+      <div>
+        <div class="sample-banner-title">📋 Sample Display — サンプル表示中</div>
+        <div class="sample-banner-desc">「200t 油圧プレス機」のサンプルで申請〜契約済みまでの全フローを体験できます。各ステップのボタンを押して進めてください。</div>
+      </div>
+    </div>
+
+    <!-- 申請フロータブ -->
+    <div id="viewFlow">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>申請フロー <span style="font-size:.86rem;color:var(--gray);font-weight:400" id="roleLabel">（借り受け企業）</span></h1>
+          <p id="pageDesc">申請した設備の進捗状況をリアルタイムで確認できます。</p>
+        </div>
+        <button class="btn-new" onclick="location.href='mare_search.html'">+ 設備を探す</button>
+      </div>
+      <div class="summary-row" id="summaryRow"></div>
+      <div class="filter-tabs" id="filterTabs">
+        <button class="ftab active" data-filter="all">すべて</button>
+        <button class="ftab" data-filter="applying">申請中</button>
+        <button class="ftab" data-filter="estimating">見積中</button>
+        <button class="ftab" data-filter="agreed">合意済</button>
+        <button class="ftab" data-filter="contracted">契約済</button>
+        <button class="ftab" data-filter="active">稼働中</button>
+        <button class="ftab" data-filter="done">完了</button>
+      </div>
+      <div class="applications" id="appList"></div>
+    </div>
+
+    <!-- 契約書タブ -->
+    <!-- ユーザー管理パネル（管理者専用） -->
+    <div id="viewUsers" style="display:none">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>ユーザー管理</h1>
+          <p>登録ユーザーとロールを管理できます（管理者専用）。</p>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);padding:20px;margin-bottom:12px;">
+        <div style="font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:var(--accent);margin-bottom:12px;">登録ユーザー</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:8px 12px;color:var(--gray)">会社名</td>
+            <td style="padding:8px 12px;color:var(--gray)">ロール</td>
+            <td style="padding:8px 12px;color:var(--gray)">登録日</td>
+            <td style="padding:8px 12px;color:var(--gray)">操作</td>
+          </tr></thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="viewContract" style="display:none">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>契約書</h1>
+          <p>締結済み・署名待ちの契約書を確認できます。</p>
+        </div>
+      </div>
+      <div id="contractList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<!-- キャンセル -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal-box danger"><div class="modal-inner">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">申請をキャンセルしますか？</div>
+    <div class="modal-desc">以下の申請をキャンセルします。<br>この操作は取り消せません。</div>
+    <div class="modal-hl" id="cancelEquipName">—</div>
+    <div class="modal-btns">
+      <button class="mbtn-yes danger" onclick="confirmCancel()">はい、キャンセル</button>
+      <button class="mbtn-no" onclick="closeModal('cancelModal')">いいえ、戻る</button>
+    </div>
+    <div class="modal-note">キャンセル後、担当者へ自動通知メールが送信されます。</div>
+  </div></div>
+</div>
+
+<!-- 借り受け人確認 -->
+<div class="modal-overlay" id="borrowerModal">
+  <div class="modal-box info"><div class="modal-inner">
+    <div class="modal-icon">🏭</div>
+    <div class="modal-title">あなたは借り受け人ですか？</div>
+    <div class="modal-desc">この見積もりを承認すると<br>ステータスが「合意済」に移行します。</div>
+    <div class="modal-hl" id="borrowerEquip">—</div>
+    <div class="modal-btns">
+      <button class="mbtn-yes" onclick="confirmApprove()">はい、承認します</button>
+      <button class="mbtn-no" onclick="closeModal('borrowerModal')">いいえ、戻る</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- 電子署名確認 -->
+<div class="modal-overlay" id="signModal">
+  <div class="modal-box success"><div class="modal-inner">
+    <div class="modal-icon">✍️</div>
+    <div class="modal-title">電子署名</div>
+    <div class="modal-desc">会社名と責任者名を入力して署名を確定してください。<br>署名後ステータスが「契約済」に変わります。</div>
+    <div class="modal-hl" id="signEquip" style="font-size:.78rem;margin-bottom:14px">—</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      <input id="signCoInput" type="text" placeholder="会社名（例：株式会社〇〇製作所）"
+        style="width:100%;background:var(--navy);border:1px solid var(--border);color:var(--white);font-family:'Noto Sans JP',sans-serif;font-size:.86rem;padding:8px 11px;outline:none;box-sizing:border-box;transition:border-color .2s"
+        onfocus="this.style.borderColor='var(--purple)'" onblur="this.style.borderColor='var(--border)'"
+        oninput="checkSignForm()">
+      <input id="signNmInput" type="text" placeholder="責任者名（例：山田 太郎）"
+        style="width:100%;background:var(--navy);border:1px solid var(--border);color:var(--white);font-family:'Noto Sans JP',sans-serif;font-size:.86rem;padding:8px 11px;outline:none;box-sizing:border-box;transition:border-color .2s"
+        onfocus="this.style.borderColor='var(--purple)'" onblur="this.style.borderColor='var(--border)'"
+        oninput="checkSignForm()">
+      <div id="signPreview" style="font-family:'Georgia',serif;font-size:1.15rem;color:var(--purple);padding:7px 11px;background:rgba(83,74,183,.1);border:1px solid rgba(83,74,183,.2);min-height:36px;text-align:center;transition:all .2s"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="mbtn-yes" id="signSubmitBtn" onclick="confirmSign()" disabled style="opacity:.5;cursor:not-allowed">署名を確定する</button>
+      <button class="mbtn-no" onclick="closeModal('signModal')">戻る</button>
+    </div>
+  </div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+
+
+// ════ データ ════
+const SC = {
+  applying:  {label:'申請中', color:'var(--s-applying)',  text:'#4cd48a',border:'rgba(76,212,138,.4)'},
+  estimating:{label:'見積中', color:'var(--s-estimating)',text:'#f0c060',border:'rgba(240,192,96,.4)'},
+  agreed:    {label:'合意済', color:'var(--s-agreed)',    text:'#afa9ec',border:'rgba(175,169,236,.4)'},
+  contracted:{label:'契約済', color:'var(--s-contracted)',text:'#85b7eb',border:'rgba(133,183,235,.4)'},
+  active:    {label:'稼働中', color:'var(--s-active)',    text:'#4cd48a',border:'rgba(76,212,138,.4)'},
+  done:      {label:'完了',   color:'var(--s-done)',      text:'#aaa',   border:'rgba(150,150,150,.3)'},
+};
+
+const SAMPLE = {
+  id:'A001', sample:true,
+  name:'【サンプル】200t 油圧プレス機', maker:'AIDA ENGINEERING / 2018年製',
+  img:'https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=400&q=80',
+  price:'¥280,000', period:'2025.04〜2025.12', area:'近畿（大阪府）',
+  specs:['200トン','ストローク400mm','三相200V','2018年製'],
+  desc:'大型プレス加工に対応した油圧プレス機。精密な圧力制御が可能で金属板材の成形・打ち抜き加工に最適。',
+  status:'applying', appliedAt:'2025.03.14', signed:false,
+  estimate:{
+    rows:[
+      {label:'月額賃借料',val:'¥280,000'},
+      {label:'人材派遣費（オペレーター1名）',val:'¥80,000 / 月'},
+      {label:'搬入費用（初回のみ）',val:'¥35,000'},
+      {label:'貸出期間',val:'2025.04〜2025.12（9か月）'},
+    ],
+    total:'¥360,000 / 月'
+  }
+};
+
+
+let APPS = {};  // 起動時は空。loadStoredApps() 後にサンプルを必要なら追加する
+let CHAT = {
+  'A001':[
+    {type:'sys', text:'申請を受け付けました。チャットを開始します。', time:'2025.03.14 10:02'},
+    {type:'mare', from:'MARE担当 / 田中', text:'山田様、「200t 油圧プレス機」へのご申請ありがとうございます。設備オーナーへ確認を取り、2〜3営業日以内に見積もりをお送りします。', time:'2025.03.14 10:05'},
+  ]
+};
+
+
+let currentFilter = 'all';
+let currentTab    = 'flow';
+let _cancelId = null, _approveId = null, _signId = null;
+let _expandedCards = new Set();
+
+// ════ タブ切り替え ════
+
+function buildBody(app) {
+  switch(app.status) {
+    case 'applying':   return buildApplying(app);
+    case 'estimating': return buildEstimating(app);
+    case 'agreed':     return buildAgreed(app);
+    case 'contracted': return buildContracted(app);
+    case 'active':     return buildActive(app);
+    case 'done':       return `<div class="sc"><p style="color:var(--gray);font-size:.84rem">貸出が完了しました。ありがとうございました。</p></div>`;
+    default: return '';
+  }
+}
+
+// A. 申請中
+function buildApplying(app) {
+  const specTags = (app.specs||[]).map(function(s){ return '<span class="spec-tag">'+s+'</span>'; }).join('');
+  return `
+  <div class="sc">
+    <div class="sc-label" style="color:var(--s-applying)">▶ STEP 1 — 申請中</div>
+    <div class="equip-detail">
+      <img src="${app.img}" alt="">
+      <div>
+        <div class="equip-detail-name">${app.name}</div>
+        <div class="equip-detail-maker">${app.maker}</div>
+        <div class="spec-tags">${specTags}</div>
+        <div class="detail-row"><span class="detail-lbl">賃借料</span><span style="color:var(--accent);font-weight:700">${app.price}/月</span></div>
+        <div class="detail-row"><span class="detail-lbl">期間</span><span>${app.period}</span></div>
+        <div class="detail-row"><span class="detail-lbl">エリア</span><span>${app.area||'—'}</span></div>
+      </div>
+    </div>
+    <div class="chat-wrap">${buildChatHTML(app.id)}</div>
+  </div>
+  <div class="stage-area">
+    <div class="stage-note">MARE担当者が申請内容を確認したうえで「見積もりへ進む」を押すと、ステータスが見積中に移行します。</div>
+    <div class="stage-btns">
+      <button class="s-btn primary" onclick="event.stopPropagation();toEstimating('${app.id}')">見積もりへ進む →</button>
+    </div>
+  </div>`;
+}
+
+// B. 見積中
+function buildEstimating(app) {
+  return `
+  <div class="sc" style="padding-bottom:0">
+    <div class="sc-label" style="color:var(--s-estimating)">▶ STEP 2 — 見積中</div>
+    <div class="chat-wrap">${buildChatHTML(app.id)}</div>
+  </div>
+  <div class="est-card">
+    <div class="est-head">📋 見積もり内容 — MARE担当 / 田中</div>
+    <div class="est-body">
+      <div class="est-rows">${app.estimate.rows.map(function(r){return '<div class="est-row"><span class="est-lbl">'+r.label+'</span><span>'+r.val+'</span></div>';}).join('')}</div>
+      <div class="est-total"><span class="est-total-lbl">月額合計（初月除く）</span><span class="est-total-val">${app.estimate.total}</span></div>
+    </div>
+  </div>
+  <div class="stage-area">
+    <div class="stage-note">見積もり内容をご確認ください。承認すると「合意済」に進みます。条件が合わない場合は「再交渉を依頼」してください（申請中に戻ります）。</div>
+    <div class="stage-btns">
+      <button class="s-btn green" onclick="event.stopPropagation();openBorrower('${app.id}')">承認する ✓</button>
+      <button class="s-btn outline" onclick="event.stopPropagation();renegotiate('${app.id}')">再交渉を依頼</button>
+    </div>
+  </div>`;
+}
+
+// C. 合意済（電子契約書）
+function buildAgreed(app) {
+  const ds = nowDate();
+  return `
+  <div class="sc" style="padding-bottom:0">
+    <div class="sc-label" style="color:var(--s-agreed)">▶ STEP 3 — 合意済 / 電子契約</div>
+    <div class="chat-wrap">${buildChatHTML(app.id)}</div>
+  </div>
+  <div class="contract-doc">
+    <div class="contract-doc-head">
+      <span class="contract-doc-title">📄 設備賃貸借契約書（電子）</span>
+      <span style="font-family:'Space Mono',monospace;font-size:.54rem;color:rgba(175,169,236,.55)">作成日: ${ds}</span>
+    </div>
+    <div class="contract-body">
+      <p style="font-size:.78rem;color:var(--gray);line-height:1.9;margin-bottom:14px">
+        本規約は、OEM製造のマッチングおよび設備活用を目的としたプラットフォーム「MARE」（以下「本サービス」）の利用条件を定めるものです。
+        利用者は本規約に同意の上、本サービスを利用するものとします。
+      </p>
+
+      <h3>第1条（目的）</h3>
+      <p>本規約は、OEM製造のマッチングおよび設備活用を目的とした本サービスの利用条件を定め、利用者間の円滑な取引および運営者の権利保護を目的とする。</p>
+
+      <h3>第2条（定義）</h3>
+      <p>本規約において以下の用語を使用する。</p>
+      <table>
+        <tr><td>運営者</td><td>本サービスを提供する事業者（MARE株式会社）</td></tr>
+        <tr><td>発注者</td><td>製造を委託する利用者（借り受け企業）</td></tr>
+        <tr><td>受注者</td><td>設備・技術を提供し製造を行う利用者（設備オーナー）</td></tr>
+        <tr><td>利用者</td><td>本サービスを利用するすべての者</td></tr>
+      </table>
+
+      <h3>第3条（本サービスの内容）</h3>
+      <p>本サービスは以下の機能を提供する。<br>
+      ① OEM製造案件の掲載および閲覧　② 発注者と受注者のマッチング<br>
+      ③ 設備利用機会の提供　④ 取引管理および情報提供</p>
+
+      <h3>第4条（契約関係）</h3>
+      <p>① 発注者と受注者間の製造契約は、当事者間で締結される。<br>
+      ② 運営者は契約当事者とはならず、取引の仲介・支援を行う。</p>
+
+      <h3>第5条（利用登録）</h3>
+      <p>① 利用者は、本規約に同意の上、登録を行うものとする。<br>
+      ② 虚偽情報の登録は禁止する。</p>
+
+      <h3>第6条（禁止事項）</h3>
+      <p>利用者は以下の行為を行ってはならない。</p>
+      <table>
+        <tr><td>①</td><td>虚偽の案件投稿</td></tr>
+        <tr><td>②</td><td>法令違反となる製造依頼</td></tr>
+        <tr><td>③</td><td>本サービスを介さない直接取引の誘導（手数料回避行為）</td></tr>
+        <tr><td>④</td><td>その他、運営者が不適切と判断する行為</td></tr>
+      </table>
+
+      <h3>第7条（手数料）</h3>
+      <p>① 利用者は、本サービスを通じて成立した取引に対し、運営者に手数料を支払うものとする。<br>
+      ② 手数料率は別途定める（取引額の5〜15%）。<br>
+      ③ 支払方法および時期は運営者の定めに従う。</p>
+
+      <h3>第8条（支払および決済）</h3>
+      <p>① 発注者は、受注者に対する支払いを本サービスを通じて行う。<br>
+      ② 必要に応じて、運営者が決済を代行することができる。</p>
+
+      <h3>第9条（品質および責任）</h3>
+      <p>① 製造品質は受注者の責任とする。<br>
+      ② 原材料および仕様は発注者の責任とする。<br>
+      ③ 運営者は品質について責任を負わない。</p>
+
+      <h3>第10条（秘密保持）</h3>
+      <p>利用者は、本サービスを通じて知り得た相手方の情報を、事前の書面による承諾なく第三者に開示・漏洩してはならない。この義務は契約終了後も3年間継続する。</p>
+
+      <h3>第11条（知的財産権）</h3>
+      <p>① 商品およびブランドに関する権利は原則として発注者に帰属する。<br>
+      ② 受注者の保有する製造技術・ノウハウは受注者に帰属する。</p>
+
+      <h3>第12条（免責事項）</h3>
+      <p>① 運営者は、利用者間のトラブルについて責任を負わない。<br>
+      ② 本サービスの利用により生じた損害について、運営者は故意または重過失がある場合を除き責任を負わない。</p>
+
+      <h3>第13条（サービスの停止）</h3>
+      <p>運営者は、システム保守・天災・その他やむを得ない事由がある場合、事前通知の上サービスを一時停止できる。</p>
+
+      <h3>第14条（契約期間）</h3>
+      <p>本規約は、利用登録時から適用され、退会または運営者による解除まで効力を有する。</p>
+
+      <h3>第15条（解除）</h3>
+      <p>利用者が本規約に違反した場合、運営者は催告なく利用停止または契約解除ができる。</p>
+
+      <h3>第16条（準拠法および管轄）</h3>
+      <p>本規約は日本法に準拠し、紛争は石川地方裁判所を専属的合意管轄とする。</p>
+
+      <div style="margin:18px 0;padding:14px;background:rgba(83,74,183,.1);border:1px solid rgba(83,74,183,.3);border-left:3px solid var(--purple)">
+        <div style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.12em;color:var(--purple);margin-bottom:8px">第17条（電子署名）— 重要</div>
+        <p style="font-size:.8rem;line-height:1.8">本規約への同意は、電子契約サービス上での承認または電子署名により成立し、書面による署名と同等の法的効力を有する（電子署名法第3条）。</p>
+      </div>
+
+      <div style="margin-bottom:16px;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border)">
+        <div style="font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--gray);margin-bottom:6px">付則</div>
+        <p style="font-size:.78rem;color:var(--gray);line-height:1.75">本規約は、個別のOEM製造契約（個別契約）と併せて適用される。個別契約と本規約が矛盾する場合、個別契約を優先する。</p>
+      </div>
+
+      <h3>個別取引情報</h3>
+      <table>
+        <tr><td>設備名称</td><td>${app.name.replace('【サンプル】','')}</td></tr>
+        <tr><td>メーカー / 製造年</td><td>${app.maker}</td></tr>
+        <tr><td>貸出期間</td><td>${app.period}</td></tr>
+        <tr><td>発注者（借り受け企業）</td><td>${app.signCompany||'（署名後に記入）'}</td></tr>
+        <tr><td>受注者（設備オーナー）</td><td>鈴木工業株式会社</td></tr>
+        ${(app.estimate?.rows||[]).map(function(r){return '<tr><td>'+(r.label||r.lbl)+'</td><td>'+r.val+'</td></tr>';}).join('')}
+        <tr><td><strong>月額合計</strong></td><td><strong style="color:var(--accent)">${app.estimate?.total||'—'}</strong></td></tr>
+      </table>
+    </div>
+    <div class="sign-area">
+      <div class="sign-title">電子署名エリア — 借り受け企業（乙）</div>
+      <div class="sign-box">
+        ${app.signed ? '<div class="sign-done">✓ 署名完了</div><div class="sign-date">'+(app.signName||'山田 太郎')+'　'+ds+'</div>' : '<div class="sign-placeholder">「電子署名する」ボタンで署名してください</div>'}
+      </div>
+      ${app.signed ? '<p style="font-size:.76rem;color:var(--green);text-align:center">✓ 電子署名が完了しています。</p>' : '<div class="stage-btns"><button class="s-btn green" onclick="openSign(\'' + app.id + '\')">電子署名する ✍️</button></div>'}
+    </div>
+  </div>`;
+}
+
+// 契約済
+function buildContracted(app) {
+  return `
+  <div class="sc">
+    <div class="sc-label" style="color:var(--s-contracted)">▶ STEP 4 — 契約済 / 稼働準備中</div>
+    <div class="chat-wrap">${buildChatHTML(app.id)}</div>
+    <div style="margin-top:16px;padding:14px;background:rgba(24,95,165,.1);border:1px solid rgba(24,95,165,.28)">
+      <p style="font-size:.82rem;line-height:1.8">電子署名が完了しました。MARE担当者が搬入・人材派遣の日程を調整中です。稼働開始日が確定次第チャットでご連絡します。</p>
+    </div>
+  </div>`;
+}
+
+// 稼働中
+function buildActive(app) {
+  return `
+  <div class="sc">
+    <div class="sc-label" style="color:var(--s-active)">▶ STEP 5 — 稼働中</div>
+    <div class="chat-wrap">${buildChatHTML(app.id)}</div>
+    <div style="margin-top:16px">
+      <div style="font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.13em;text-transform:uppercase;color:var(--gray);margin-bottom:7px">月次精算履歴</div>
+      <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+        <span style="font-family:'Space Mono',monospace;font-size:.64rem;color:var(--gray)">2025年4月分</span>
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'Space Mono',monospace;font-weight:700;color:var(--accent)">¥360,000</span><span style="font-family:'Space Mono',monospace;font-size:.52rem;color:var(--green);background:rgba(39,174,114,.1);border:1px solid rgba(39,174,114,.28);padding:2px 7px">支払済</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ════ チャット ════
+
+function buildChatHTML(id) {
+  return `
+  <div class="chat-head">
+    <span class="chat-title">チャット — MARE担当者</span>
+    <span class="online"><span class="online-dot"></span>MARE担当 / 田中</span>
+  </div>
+  <div class="chat-msgs" id="chatMsgs-${id}"></div>
+  <div class="chat-input">
+    <div class="chat-toolbar">
+      <button class="ct-btn" onclick="document.getElementById('fi-${id}').click()">📎</button>
+      <input type="file" id="fi-${id}" style="display:none" onchange="attachFile('${id}',this)">
+    </div>
+    <div class="chat-row">
+      <textarea class="chat-ta" id="chatInput-${id}" placeholder="メッセージを入力..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg('${id}');}"
+        oninput="this.style.height='';this.style.height=Math.min(this.scrollHeight,96)+'px'"></textarea>
+      <button class="chat-send" onclick="sendMsg('${id}')">送信 →</button>
+    </div>
+  </div>`;
+}
+
+function renderChat(id) {
+  const el = document.getElementById('chatMsgs-'+id);
+  if (!el) return;
+  const msgs = CHAT[id] || [];
+  el.innerHTML = msgs.map(m => {
+    if (m.type==='sys')
+      return `<div class="cmsg-sys">${m.text} <span style="font-size:.44rem;opacity:.5">${m.time}</span></div>`;
+    if (m.type==='status')
+      return `<div class="cmsg-status">🔔 ${m.text} <span style="font-size:.44rem;opacity:.6">${m.time}</span></div>`;
+    if (m.type==='file') {
+      const who = m.from.includes('MARE') ? 'mare' : 'me';
+      return `<div class="cmsg ${who}"><div class="cmsg-from">${m.from}</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--navy2);border:1px solid var(--border);margin-top:3px">
+          <span>📄</span><div><div style="font-size:.78rem;font-weight:500">${m.fileName}</div><div style="font-family:'Space Mono',monospace;font-size:.52rem;color:var(--gray)">${m.fileSize}</div></div>
+        </div><div class="cmsg-time">${m.time}</div></div>`;
+    }
+    const who = m.type==='me' ? 'me' : 'mare';
+    return `<div class="cmsg ${who}"><div class="cmsg-from">${m.from}</div><div class="cmsg-bubble">${m.text}</div><div class="cmsg-time">${m.time}</div></div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendMsg(id) {
+  const ta = document.getElementById('chatInput-'+id);
+  const txt = ta.value.trim();
+  if (!txt) return;
+  addMsg(id, {type:'me', from:'山田 太郎（借り受け）', text:txt, time:nowTime()});
+  ta.value = ''; ta.style.height = '';
+  renderChat(id);
+  setTimeout(() => {
+    const rs = ['承知しました。確認して折り返しご連絡します。','ありがとうございます。調整してご連絡します。','ご確認ありがとうございます。引き続きよろしくお願いします。'];
+    addMsg(id, {type:'mare', from:'MARE担当 / 田中', text:rs[Math.floor(Math.random()*3)], time:nowTime()});
+    renderChat(id);
+  }, 1800);
+}
+
+function attachFile(id, input) {
+  if (!input.files[0]) return;
+  const f = input.files[0];
+  addMsg(id, {type:'file', from:'山田 太郎（借り受け）', fileName:f.name, fileSize:(f.size/1024).toFixed(0)+' KB', time:nowTime()});
+  renderChat(id);
+  input.value = '';
+}
+
+function addMsg(id, msg) {
+  if (!CHAT[id]) CHAT[id] = [];
+  CHAT[id].push(msg);
+}
+
+
+// ════ ステータス遷移 ════
+
+// A → 見積中
+function toEstimating(id) {
+  APPS[id].status = 'estimating';
+  addMsg(id, {type:'status', text:'ステータスが「見積中」に変わりました', time:nowTime()});
+  addMsg(id, {type:'mare', from:'MARE担当 / 田中', text:'設備オーナーから見積もりが届きました。下記の見積もり内容をご確認いただき「承認する」または「再交渉を依頼」をお選びください。', time:nowTime()});
+  // フィルターを「すべて」にリセットしてからカード再描画
+  resetFilterToAll();
+  refreshCard(id);
+  showToast('ステータスが「見積中」に移行しました。');
+}
+
+// B 承認 — 借り受け人確認モーダル
+function openBorrower(id) {
+  _approveId = id;
+  document.getElementById('borrowerEquip').textContent = APPS[id]?.name || '—';
+  openModal('borrowerModal');
+}
+
+function confirmApprove() {
+  closeModal('borrowerModal');
+  const id = _approveId;
+  APPS[id].status = 'agreed';
+  addMsg(id, {type:'me',   from:'山田 太郎（借り受け）', text:'見積もり内容を確認しました。承認します。', time:nowTime()});
+  addMsg(id, {type:'status', text:'見積もりが承認されました。ステータスが「合意済」に変わりました', time:nowTime()});
+  addMsg(id, {type:'mare', from:'MARE担当 / 田中', text:'承認ありがとうございます。電子契約書を作成しました。下部の契約書をご確認のうえ電子署名をお願いします。', time:nowTime()});
+  resetFilterToAll();
+  refreshCard(id);
+  showToast('承認しました。ステータスが「合意済」に移行しました。');
+}
+
+// B 再交渉 → 申請中に戻る
+function renegotiate(id) {
+  APPS[id].status = 'applying';
+  addMsg(id, {type:'me',   from:'山田 太郎（借り受け）', text:'見積もり内容について再交渉をお願いします。', time:nowTime()});
+  addMsg(id, {type:'status', text:'再交渉リクエストが送信されました。ステータスが「申請中」に戻りました', time:nowTime()});
+  addMsg(id, {type:'mare', from:'MARE担当 / 田中', text:'再交渉リクエストを受け付けました。条件を再確認してご連絡します。', time:nowTime()});
+  resetFilterToAll();
+  refreshCard(id);
+  showToast('再交渉リクエストをMAREに送信しました。申請中に戻ります。');
+}
+
+// C 電子署名
+function openSign(id) {
+  _signId = id;
+  document.getElementById('signEquip').textContent = APPS[id]?.name || '—';
+  const ci = document.getElementById('signCoInput');
+  const ni = document.getElementById('signNmInput');
+  const pv = document.getElementById('signPreview');
+  const sb = document.getElementById('signSubmitBtn');
+  if (ci) ci.value = '';
+  if (ni) ni.value = '';
+  if (pv) pv.textContent = '';
+  if (sb) { sb.disabled = true; sb.style.opacity = '.5'; sb.style.cursor = 'not-allowed'; }
+  openModal('signModal');
+}
+
+function checkSignForm() {
+  const co = (document.getElementById('signCoInput')?.value || '').trim();
+  const nm = (document.getElementById('signNmInput')?.value || '').trim();
+  const pv = document.getElementById('signPreview');
+  const sb = document.getElementById('signSubmitBtn');
+  if (pv) pv.textContent = nm ? (co ? co + '　/　' : '') + nm : '';
+  const ok = co.length >= 1 && nm.length >= 2;
+  if (sb) { sb.disabled = !ok; sb.style.opacity = ok ? '1' : '.5'; sb.style.cursor = ok ? 'pointer' : 'not-allowed'; }
+}
+
+function confirmSign() {
+  const co = (document.getElementById('signCoInput')?.value || '').trim();
+  const nm = (document.getElementById('signNmInput')?.value || '').trim();
+  if (!co || nm.length < 2) { showToast('会社名と責任者名を入力してください。'); return; }
+  closeModal('signModal');
+  const id = _signId;
+  APPS[id].signed      = true;
+  APPS[id].signCompany = co;
+  APPS[id].signName    = nm;
+  APPS[id].signedAt    = nowTime();
+  APPS[id].status      = 'contracted';
+  const label = co + ' / ' + nm;
+  addMsg(id, {type:'status', text:`電子署名が完了しました（${label}）。ステータスが「契約済」に変わりました`, time:nowTime()});
+  addMsg(id, {type:'mare', from:'MARE担当 / 田中', text:'電子署名を確認しました。設備の搬入・人材派遣の日程を調整します。稼働開始日が確定次第ご連絡します。', time:nowTime()});
+  document.getElementById('contractBadge').style.display = '';
+  document.getElementById('contractBadge').textContent = '1';
+  refreshCard(id);
+  renderContractTab();
+  showToast('電子署名完了！左の「契約書」タブでご確認いただけます。', 6000);
+}
+
+// ════ キャンセル ════
+function openCancel(id) {
+  _cancelId = id;
+  document.getElementById('cancelEquipName').textContent = APPS[id]?.name || '—';
+  openModal('cancelModal');
+}
+
+async function confirmCancel() {
+  closeModal('cancelModal');
+  const id = _cancelId;
+  if (!id) return;
+  const name = APPS[id] ? APPS[id].name : id;
+  // localStorage から削除
+  try {
+    localStorage.removeItem(id);
+    const k = JSON.parse(localStorage.getItem('mare_apply_keys') || '[]');
+    localStorage.setItem('mare_apply_keys', JSON.stringify(k.filter(function(x){ return x !== id; })));
+  } catch(e) {}
+  // Storage API から削除（file://では使えないのでtry/catch）
+  try { if (window.storage && window.storage.delete) window.storage.delete(id); } catch(e) {}
+  // 画面から削除
+  delete APPS[id];
+  if (_openId === id) _openId = null;
+  renderAll();
+  // メール通知
+  const sub  = encodeURIComponent('【申請キャンセル通知】' + name);
+  const body = encodeURIComponent('申請がキャンセルされました。\n■ 設備: ' + name + '\n■ 申請ID: ' + id + '\n■ 日時: ' + nowTime());
+  const a = document.createElement('a');
+  a.href = 'mailto:mare.corp.info@gmail.com?subject=' + sub + '&body=' + body;
+  a.click();
+  showToast('申請をキャンセルしました。');
+}
+
+// ════ 契約書タブ ════
+
+function renderContractTab() {
+  const list = Object.values(APPS).filter(a=>['agreed','contracted','active','done'].includes(a.status));
+  const el = document.getElementById('contractList');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📄</div><div class="empty-title">契約書はまだありません</div><div class="empty-desc">合意済みになると契約書がここに表示されます。</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(app => {
+    const signed = app.signCompany && app.signName;
+    const signLabel = signed ? `${app.signCompany} / ${app.signName}` : '';
+    const ds = nowDate();
+    return `
+    <div style="margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:1rem">📄</span>
+        <span style="font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.1em;color:var(--gray)">${app.name.replace('【サンプル】','')} — 賃貸借契約書</span>
+        ${signed ? '<span style="font-family:Space Mono,monospace;font-size:.56rem;color:var(--green);background:rgba(39,174,114,.1);border:1px solid rgba(39,174,114,.28);padding:2px 8px">✓ 署名済: '+signLabel+'</span>' : '<span style="font-family:Space Mono,monospace;font-size:.56rem;color:var(--accent);background:var(--adim);border:1px solid var(--bora);padding:2px 8px">✍️ 署名待ち</span>'}
+      </div>
+      <div class="contract-doc">
+        <div class="contract-doc-head">
+          <span class="contract-doc-title">📄 設備賃貸借契約書（電子）</span>
+          <span style="font-family:'Space Mono',monospace;font-size:.54rem;color:rgba(175,169,236,.55)">作成日: ${ds}</span>
+        </div>
+        <div class="contract-body">
+          <p>MAREプラットフォームを通じ、設備オーナー（甲）、借り受け企業（乙）は以下の通り設備賃貸借契約を締結する。</p>
+          <p style="font-size:.76rem;color:var(--gray);line-height:1.85;margin-bottom:12px">本規約は、OEM製造のマッチングおよび設備活用を目的とした本サービスの利用条件を定め、利用者間の円滑な取引および運営者の権利保護を目的とする。</p>
+          <h3>第1条（目的）</h3><p>本規約は、利用者間の円滑な取引および運営者の権利保護を目的とする。</p>
+          <h3>第2条（定義）</h3>
+          <table><tr><td>運営者</td><td>MARE株式会社</td></tr><tr><td>発注者</td><td>借り受け企業</td></tr><tr><td>受注者</td><td>設備オーナー</td></tr></table>
+          <h3>第3条〜第6条（サービス内容・契約関係・登録・禁止事項）</h3>
+          <p>① OEM製造案件の掲載・閲覧　② マッチング機能の提供　③ 運営者は取引の仲介者であり当事者とはならない　④ 虚偽登録・法令違反・手数料回避は禁止</p>
+          <h3>第7条（手数料）</h3><p>取引成立時に取引額の5〜15%の手数料が発生する。</p>
+          <h3>第8条（支払および決済）</h3><p>発注者はプラットフォームを通じて支払いを行う。運営者が決済を代行することがある。</p>
+          <h3>第9条（品質および責任）</h3><p>製造品質は受注者の責任。原材料・仕様は発注者の責任。運営者は品質について責任を負わない。</p>
+          <h3>第10条（秘密保持）</h3><p>取引を通じて知り得た情報の第三者開示を禁止する。義務は契約終了後3年間継続する。</p>
+          <h3>第11条（知的財産権）</h3><p>商品・ブランド権利は発注者に帰属。受注者の技術は受注者に帰属する。</p>
+          <h3>第12条（免責事項）</h3><p>運営者は利用者間トラブルの責任を負わない。故意・重過失がある場合を除く。</p>
+          <h3>第13〜第16条（停止・期間・解除・準拠法）</h3>
+          <p>・やむを得ない事由によるサービス停止あり　・利用登録時から規約適用　・違反時は利用停止可　・準拠法は日本法、管轄は石川地方裁判所</p>
+          <div style="margin:14px 0;padding:12px;background:rgba(83,74,183,.1);border:1px solid rgba(83,74,183,.3);border-left:3px solid var(--purple)">
+            <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--purple);margin-bottom:5px">第17条（電子署名）— 重要</div>
+            <p style="font-size:.78rem;line-height:1.75">電子契約サービス上での承認または電子署名により成立し、書面による署名と同等の法的効力を有する（電子署名法第3条）。</p>
+          </div>
+        </div>
+        <div class="sign-area">
+          <div class="sign-title">${signed ? '✓ 電子署名完了' : '✍️ 電子署名エリア — 借り受け企業（乙）'}</div>
+          ${signed
+            ? '<table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px"><tr><td style="padding:6px 11px;border:1px solid var(--border);background:var(--steel);width:30%;color:var(--gray)">会社名</td><td style="padding:6px 11px;border:1px solid var(--border)">'+app.signCompany+'</td></tr><tr><td style="padding:6px 11px;border:1px solid var(--border);background:var(--steel);color:var(--gray)">責任者名</td><td style="padding:6px 11px;border:1px solid var(--border);font-family:Georgia,serif;font-size:1.1rem;color:var(--purple)">'+app.signName+'</td></tr><tr><td style="padding:6px 11px;border:1px solid var(--border);background:var(--steel);color:var(--gray)">署名日時</td><td style="padding:6px 11px;border:1px solid var(--border);font-family:Space Mono,monospace;font-size:.72rem">'+(app.signedAt||'—')+'</td></tr></table>'
+            : '<p style="font-size:.78rem;color:var(--gray);margin-bottom:10px">申請フローの「合意済」セクションで電子署名を行ってください。</p>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════ カード開閉 ════
+function toggleCard(id) {
+  const card   = document.getElementById('card-' + id);
+  const bodyEl = document.getElementById('app-body-' + id);
+  const chev   = card.querySelector('.chevron');
+  const isOpen = bodyEl.style.display === 'block';
+
+  // 全カードを閉じる
+  document.querySelectorAll('.app-body').forEach(b => {
+    b.style.display = 'none';
+    b.closest('.app-card')?.querySelector('.chevron')?.style.setProperty('transform','');
+  });
+  _expandedCards.clear();
+
+  if (!isOpen) {
+    bodyEl.style.display = 'block';
+    if (chev) chev.style.transform = 'rotate(180deg)';
+    _expandedCards.add(id);
+    setTimeout(() => renderChat(id), 50);
+  }
+}
+
+// ════ フィルターを「すべて」にリセット ════
+function resetFilterToAll() {
+  currentFilter = 'all';
+  // data-filter="all" のタブをアクティブに
+  document.querySelectorAll('.ftab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === 'all');
+  });
+}
+
+// ════ refreshCard (ステータス変更後の再描画) ════
+function refreshCard(id) {
+  const app  = APPS[id];
+  if (!app) return;
+
+  // ① body要素を取得してコンテンツを差し替え（カード自体は消さない）
+  const bodyEl = document.getElementById('app-body-' + id);
+  if (bodyEl) {
+    bodyEl.innerHTML = buildBody(app);
+    // display:block をインラインで確実に指定（CSS継承に頼らない）
+    bodyEl.style.display = 'block';
+  }
+
+  // ② ステータスバーとバッジを更新
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    const s = SC[app.status];
+    const bar = card.querySelector('.status-bar');
+    if (bar) bar.style.background = s.color;
+    const badge = card.querySelector('.app-badge');
+    if (badge) {
+      badge.textContent = s.label;
+      badge.style.color = s.text;
+      badge.style.borderColor = s.border;
+      badge.style.background = s.border.replace('.4','0.07');
+    }
+  }
+
+  // ③ サマリーのみ更新（カード一覧の再描画はしない）
+  renderSummary();
+
+  // ④ チャット描画
+  setTimeout(() => renderChat(id), 30);
+}
+
+// ════ localStorage 外部申請読込 ════
+async function loadStoredApps() {
+  const addIfNew = d => {
+    if (!d || !d.id || APPS[d.id]) return;
+    if (!d.status) d.status = 'applying';
+    APPS[d.id] = d;
+  };
+  // ① localStorage
+  try {
+    const keys = JSON.parse(localStorage.getItem('mare_apply_keys')||'[]');
+    keys.forEach(k => { try { const r=localStorage.getItem(k); if(r) addIfNew(JSON.parse(r)); } catch(e){} });
+  } catch(e) {}
+  // ② Storage API (Claude.ai上のみ、file://では無効)
+  try {
+    if (window.storage && typeof window.storage.list === 'function') {
+      const result = await window.storage.list('mare_apply_');
+      if (result && result.keys) {
+        for (const k of result.keys) {
+          try { const item = await window.storage.get(k); if(item) addIfNew(JSON.parse(item.value)); } catch(e) {}
+        }
+      }
+    }
+  } catch(e) {}
+  // ③ 申請データが1件もなければサンプルを表示（デモ用）
+  if (Object.keys(APPS).length === 0) {
+    APPS['A001'] = JSON.parse(JSON.stringify(SAMPLE));
+  }
+}
+
+// ════ モーダル ════
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ════ 通知 ════
+function toggleNotif() { document.getElementById('notifPanel').classList.toggle('open'); }
+function renderNotif() {
+  document.getElementById('notifList').innerHTML = `
+    <div class="notif-item unread">
+      <div class="notif-item-title">【サンプル】見積もりが届きました</div>
+      <div class="notif-item-desc">200t 油圧プレス機の見積もりをご確認ください。</div>
+      <div class="notif-item-time">たった今</div>
+    </div>`;
+  document.getElementById('bellBadge').style.display = '';
+}
+
+// ════ TOAST ════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ════ ユーティリティ ════
+function renderAll() { renderSummary(); renderApps(); }
+function nowTime() {
+  const d=new Date();
+  return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function nowDate() {
+  const d=new Date();
+  return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0');
+}
+
+// ════ 初期化 ════
+
+// ════════════════════════════════════════
+// ロール別設定
+// ════════════════════════════════════════
+const ROLE_CONFIG = {
+  seeker: {
+    label:    '借り受け企業',
+    avatar:   '借',
+    pageTitle: '申請フロー',
+    pageDesc:  '申請した設備の進捗をリアルタイムで確認できます。',
+    btnLabel:  '＋ 設備を探す',
+    // 表示するステータスフィルタータブ
+    filterTabs: ['all','applying','estimating','agreed','contracted','active','done'],
+    filterLabels: {'all':'すべて','applying':'申請中','estimating':'見積中','agreed':'合意済','contracted':'契約済','active':'稼働中','done':'完了'},
+    // サイドバーメニュー
+    sidebarItems: [
+      {tab:'flow',    icon:'📋', label:'申請フロー',   badge:true},
+      {tab:'contract',icon:'📄', label:'契約書',       badge:'contract'},
+      {tab:'billing', icon:'💰', label:'請求・精算',   badge:false},
+    ],
+    // 空のときの表示
+    emptyTitle: '申請中の設備はありません',
+    emptyDesc:  '設備を探すページから申請すると、ここに表示されます。',
+  },
+  owner: {
+    label:    '設備オーナー',
+    avatar:   'オ',
+    pageTitle: '貸出管理',
+    pageDesc:  '貸し出し中・申請受付中の設備の進捗を確認できます。',
+    btnLabel:  '＋ 設備を登録する',
+    // オーナーには「申請中」「見積中」は不要（MAREが調整するため）
+    filterTabs: ['all','agreed','contracted','active','done'],
+    filterLabels: {'all':'すべて','agreed':'合意済','contracted':'契約済','active':'貸出中','done':'完了'},
+    sidebarItems: [
+      {tab:'flow',    icon:'🏭', label:'貸出管理',     badge:true},
+      {tab:'contract',icon:'📄', label:'契約書',       badge:'contract'},
+      {tab:'billing', icon:'💰', label:'入金履歴',     badge:false},
+    ],
+    emptyTitle: '貸出中の設備はありません',
+    emptyDesc:  '設備を登録・掲載すると、申請が届いたときここに表示されます。',
+  },
+  admin: {
+    label:    'MARE管理者',
+    avatar:   '管',
+    pageTitle: '管理ダッシュボード',
+    pageDesc:  '全申請・全ユーザーを管理できます。',
+    btnLabel:  '＋ 設備を登録',
+    filterTabs: ['all','applying','estimating','agreed','contracted','active','done'],
+    filterLabels: {'all':'すべて','applying':'申請中','estimating':'見積中','agreed':'合意済','contracted':'契約済','active':'稼働中','done':'完了'},
+    sidebarItems: [
+      {tab:'flow',    icon:'📋', label:'全申請管理',   badge:true},
+      {tab:'contract',icon:'📄', label:'契約書',       badge:'contract'},
+      {tab:'billing', icon:'💰', label:'精算管理',     badge:false},
+      {tab:'users',   icon:'👥', label:'ユーザー管理', badge:false},
+    ],
+    emptyTitle: '申請はありません',
+    emptyDesc:  '申請が届くとここに表示されます。',
+  },
+};
+
+// ── ユーザー情報をlocalStorageから読み込む ──
+function loadUserFromStorage() {
+  try {
+    const raw = localStorage.getItem('mare_user');
+    if (raw) {
+      const user = JSON.parse(raw);
+      return user;
+    }
+  } catch(e) {}
+  return null;
+}
+
+// ── ログアウト ──
+function logout() {
+  try {
+    localStorage.removeItem('mare_user');
+    localStorage.removeItem('mare_role');
+    localStorage.removeItem('mare_logged_in');
+  } catch(e) {}
+  location.href = 'mare_register.html';
+}
+
+
+// ── ロールに応じてUIを切り替える ──────────────────────────────
+function applyRoleUI(role) {
+  const cfg = ROLE_CONFIG[role] || ROLE_CONFIG.seeker;
+  const userRaw = loadUserFromStorage();
+  const company = userRaw?.company || cfg.label;
+
+  // ナビ
+  const navAvatar = document.getElementById('navAvatar');
+  const navName   = document.getElementById('navName');
+  if (navAvatar) navAvatar.textContent = cfg.avatar;
+  if (navName)   navName.textContent = company + ' 様';
+
+  // ページタイトル・説明
+  const titleEl = document.getElementById('pageTitle');
+  const descEl  = document.getElementById('pageDesc');
+  if (titleEl) titleEl.innerHTML = cfg.pageTitle + ' <span style="font-size:.82rem;color:var(--gray);font-weight:400">（' + cfg.label + '）</span>';
+  if (descEl)  descEl.textContent = cfg.pageDesc;
+
+  // 新規申請ボタン
+  const newBtn = document.querySelector('.btn-primary[onclick*="mare_search"]');
+  if (newBtn) newBtn.textContent = cfg.btnLabel;
+
+  // フィルタータブ再構築（ロール別）
+  const tabsEl = document.getElementById('filterTabs');
+  if (tabsEl) {
+    tabsEl.innerHTML = cfg.filterTabs.map((key, i) =>
+      `<button class="ftab${i===0?' active':''}" data-filter="${key}">${cfg.filterLabels[key]}</button>`
+    ).join('');
+  }
+
+  // サイドバーのrole-btn アクティブ状態
+  document.querySelectorAll('.role-btn[data-role]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.role === role);
+  });
+
+  // 管理者ボタン・メニュー制御
+  const adminBtn = document.getElementById('roleAdmin');
+  if (adminBtn) adminBtn.style.display = (role === 'admin') ? '' : 'none';
+  const tabUsers = document.getElementById('tabUsers');
+  if (tabUsers) tabUsers.style.display = (role === 'admin') ? '' : 'none';
+
+  // サイドバーのtabFlow/tabContract の表示テキストをロール別に変更
+  const tabFlow = document.getElementById('tabFlow');
+  if (tabFlow) {
+    tabFlow.childNodes[1] && (tabFlow.innerHTML =
+      `<span>${cfg.sidebarItems[0].icon}</span>${cfg.sidebarItems[0].label}<span class="sidebar-badge" id="flowBadge">0</span>`);
+  }
+}
+
+// ── ユーザー管理タブ（管理者専用） ──────────────────────────
+function renderUsersTab() {
+  const tbody = document.getElementById('userTableBody');
+  if (!tbody) return;
+  const users = [];
+  try {
+    const raw = localStorage.getItem('mare_user');
+    if (raw) users.push(JSON.parse(raw));
+  } catch(e) {}
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px;color:var(--gray);text-align:center">登録ユーザーはいません</td></tr>';
+    return;
+  }
+  const roleLabel = {seeker:'借り受け',owner:'オーナー',both:'両方',admin:'管理者'};
+  tbody.innerHTML = users.map(u => `
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 12px">${u.company||'—'}</td>
+      <td style="padding:8px 12px"><span style="font-family:'Space Mono',monospace;font-size:.56rem;color:var(--accent);background:var(--adim);padding:2px 7px;border:1px solid var(--bora)">${roleLabel[u.role]||u.role}</span></td>
+      <td style="padding:8px 12px;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--gray)">${u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('ja-JP') : '—'}</td>
+      <td style="padding:8px 12px"><button onclick="switchRole('${u.role}')" style="font-family:'Space Mono',monospace;font-size:.56rem;padding:3px 8px;background:transparent;border:1px solid var(--border);color:var(--gray);cursor:pointer">このロールで表示</button></td>
+    </tr>`).join('');
+}
+
+// ── 初期化 ──────────────────────────────────────────────────
+async function init() {
+  const savedUser = loadUserFromStorage();
+  const savedRole = savedUser?.role || localStorage.getItem('mare_role') || 'seeker';
+  currentRole = ['seeker','owner','admin','both'].includes(savedRole) ? savedRole : 'seeker';
+  if (currentRole === 'both') currentRole = 'seeker';
+
+  applyRoleUI(currentRole);
+  setupFilterTabs();
+  await loadStoredApps();
+  renderAll();
+  renderNotif();
+  // 最初のカードを展開（インラインstyle方式）
+  setTimeout(() => {
+    const first = document.querySelector('.app-card');
+    if (first) {
+      const id = first.id.replace('card-', '');
+      const bodyEl = document.getElementById('app-body-' + id);
+      if (bodyEl) {
+        bodyEl.style.display = 'block';
+        const chev = first.querySelector('.chevron');
+        if (chev) chev.style.transform = 'rotate(180deg)';
+        _expandedCards.add(id);
+        setTimeout(() => renderChat(id), 60);
+      }
+    }
+  }, 200);
+}
+
+init();
+
+
+
+function showTab(tab) {
+  currentTab = tab;
+  document.getElementById('viewFlow').style.display     = tab==='flow'     ? '':'none';
+  document.getElementById('viewContract').style.display = tab==='contract' ? '':'none';
+  const usersPanel = document.getElementById('viewUsers');
+  if (usersPanel) usersPanel.style.display = tab==='users' ? '' : 'none';
+  document.getElementById('tabFlow').classList.toggle('active',    tab==='flow');
+  document.getElementById('tabContract').classList.toggle('active', tab==='contract');
+  const tabUsersEl = document.getElementById('tabUsers');
+  if (tabUsersEl) tabUsersEl.classList.toggle('active', tab==='users');
+  if (tab==='contract') renderContractTab();
+  if (tab==='users')    renderUsersTab();
+}
+
+// ════ ロール ════
+function switchRole(r) {
+  currentRole = r;
+  // localStorageに保存
+  try {
+    const user = JSON.parse(localStorage.getItem('mare_user') || '{}');
+    user.role = r;
+    localStorage.setItem('mare_user', JSON.stringify(user));
+    localStorage.setItem('mare_role', r);
+  } catch(e) {}
+  currentFilter = 'all';
+  applyRoleUI(r);
+  setupFilterTabs();
+  renderAll();
+}
+
+// ════ フィルタータブ ════
+
+function applyRoleUI(role) {
+  const cfg = ROLE_CONFIG[role] || ROLE_CONFIG.seeker;
+  const userRaw = loadUserFromStorage();
+  const company = userRaw?.company || cfg.label;
+
+  // ナビ
+  const navAvatar = document.getElementById('navAvatar');
+  const navName   = document.getElementById('navName');
+  if (navAvatar) navAvatar.textContent = cfg.avatar;
+  if (navName)   navName.textContent = company + ' 様';
+
+  // ページタイトル・説明
+  const titleEl = document.getElementById('pageTitle');
+  const descEl  = document.getElementById('pageDesc');
+  if (titleEl) titleEl.innerHTML = cfg.pageTitle + ' <span style="font-size:.82rem;color:var(--gray);font-weight:400">（' + cfg.label + '）</span>';
+  if (descEl)  descEl.textContent = cfg.pageDesc;
+
+  // 新規申請ボタン
+  const newBtn = document.querySelector('.btn-primary[onclick*="mare_search"]');
+  if (newBtn) newBtn.textContent = cfg.btnLabel;
+
+  // フィルタータブ再構築（ロール別）
+  const tabsEl = document.getElementById('filterTabs');
+  if (tabsEl) {
+    tabsEl.innerHTML = cfg.filterTabs.map((key, i) =>
+      `<button class="ftab${i===0?' active':''}" data-filter="${key}">${cfg.filterLabels[key]}</button>`
+    ).join('');
+  }
+
+  // サイドバーのrole-btn アクティブ状態
+  document.querySelectorAll('.role-btn[data-role]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.role === role);
+  });
+
+  // 管理者ボタン・メニュー制御
+  const adminBtn = document.getElementById('roleAdmin');
+  if (adminBtn) adminBtn.style.display = (role === 'admin') ? '' : 'none';
+  const tabUsers = document.getElementById('tabUsers');
+  if (tabUsers) tabUsers.style.display = (role === 'admin') ? '' : 'none';
+
+  // サイドバーのtabFlow/tabContract の表示テキストをロール別に変更
+  const tabFlow = document.getElementById('tabFlow');
+  if (tabFlow) {
+    tabFlow.childNodes[1] && (tabFlow.innerHTML =
+      `<span>${cfg.sidebarItems[0].icon}</span>${cfg.sidebarItems[0].label}<span class="sidebar-badge" id="flowBadge">0</span>`);
+  }
+}
+
+// ── ユーザー管理タブ（管理者専用） ──────────────────────────
+function renderUsersTab() {
+  const tbody = document.getElementById('userTableBody');
+  if (!tbody) return;
+  const users = [];
+  try {
+    const raw = localStorage.getItem('mare_user');
+    if (raw) users.push(JSON.parse(raw));
+  } catch(e) {}
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px;color:var(--gray);text-align:center">登録ユーザーはいません</td></tr>';
+    return;
+  }
+  const roleLabel = {seeker:'借り受け',owner:'オーナー',both:'両方',admin:'管理者'};
+  tbody.innerHTML = users.map(u => `
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 12px">${u.company||'—'}</td>
+      <td style="padding:8px 12px"><span style="font-family:'Space Mono',monospace;font-size:.56rem;color:var(--accent);background:var(--adim);padding:2px 7px;border:1px solid var(--bora)">${roleLabel[u.role]||u.role}</span></td>
+      <td style="padding:8px 12px;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--gray)">${u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('ja-JP') : '—'}</td>
+      <td style="padding:8px 12px"><button onclick="switchRole('${u.role}')" style="font-family:'Space Mono',monospace;font-size:.56rem;padding:3px 8px;background:transparent;border:1px solid var(--border);color:var(--gray);cursor:pointer">このロールで表示</button></td>
+    </tr>`).join('');
+}
+
+// ── 初期化 ──────────────────────────────────────────────────
+
+// ════════════════════════════════════════
+// コア関数（シンプル・確実動作版）
+// ════════════════════════════════════════
+
+// 現在開いているカードID（1つだけ管理）
+var _openId = null;
+
+function setupFilterTabs() {
+  var el = document.getElementById('filterTabs');
+  if (!el) return;
+  el.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-filter]');
+    if (!btn) return;
+    currentFilter = btn.dataset.filter;
+    document.querySelectorAll('.ftab').forEach(function(t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    _openId = null;
+    renderApps();
+  });
+}
+
+function renderSummary() {
+  var apps = Object.values(APPS);
+  var el = document.getElementById('summaryRow');
+  if (!el) return;
+  el.innerHTML = [
+    {num: apps.length,                                          label:'申請総数'},
+    {num: apps.filter(function(a){return a.status==='applying';}).length,   label:'申請中'},
+    {num: apps.filter(function(a){return a.status==='estimating';}).length, label:'見積中'},
+    {num: apps.filter(function(a){return a.status==='active';}).length,     label:'稼働中'},
+  ].map(function(it) {
+    return '<div class="summary-card"><span class="summary-num">'+it.num+'</span><span class="summary-label">'+it.label+'</span></div>';
+  }).join('');
+}
+
+function renderApps() {
+  var apps = Object.values(APPS);
+  var filtered = currentFilter === 'all'
+    ? apps
+    : apps.filter(function(a) { return a.status === currentFilter; });
+
+  var el = document.getElementById('appList');
+  if (!el) return;
+
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">該当する申請はありません</div><div class="empty-desc">フィルターを変更するか新規申請してください</div></div>';
+    _openId = null;
+    return;
+  }
+
+  // カードを描画
+  el.innerHTML = filtered.map(function(app) { return buildCard(app); }).join('');
+
+  // 開くカードを決定
+  var openId = _openId;
+  var valid = filtered.some(function(a) { return a.id === openId; });
+  if (!valid) openId = filtered[0].id;
+  _openId = openId;
+
+  // 開く
+  var body = document.getElementById('body-' + openId);
+  var card = document.getElementById('card-' + openId);
+  if (body) body.style.display = 'block';
+  if (card) {
+    var ch = card.querySelector('.chevron');
+    if (ch) ch.style.transform = 'rotate(180deg)';
+  }
+  renderChat(openId);
+}
+
+function buildCard(app) {
+  var s = SC[app.status];
+  var bd = s.border.replace('.4', '0.07');
+  return '<div class="app-card" id="card-'+app.id+'">'
+    + '<div class="app-card-header" onclick="toggleCard(\''+app.id+'\');">'
+    +   '<div class="status-bar" style="background:'+s.color+'"></div>'
+    +   '<img class="equip-img" src="'+app.img+'" alt="" loading="lazy">'
+    +   '<div class="app-info">'
+    +     '<div class="app-name">'+app.name+'</div>'
+    +     '<div class="app-maker">'+app.maker+'</div>'
+    +   '</div>'
+    +   '<div class="app-meta">'
+    +     '<div class="app-period">📅 '+app.period+'</div>'
+    +     '<div class="app-price">'+app.price+'<span style="font-size:.54rem;color:var(--gray);font-weight:400">/月</span></div>'
+    +     '<div class="app-badge" style="color:'+s.text+';border-color:'+s.border+';background:'+bd+'">'+s.label+'</div>'
+    +     '<button class="cancel-btn" onclick="event.stopPropagation();openCancel(\''+app.id+'\')">キャンセル</button>'
+    +   '</div>'
+    +   '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
+    + '</div>'
+    + '<div class="app-body" id="body-'+app.id+'" style="display:none">'+buildBody(app)+'</div>'
+    + '</div>';
+}
+
+function toggleCard(id) {
+  // 全部閉じる
+  document.querySelectorAll('.app-body').forEach(function(b) { b.style.display = 'none'; });
+  document.querySelectorAll('.chevron').forEach(function(c) { c.style.transform = ''; });
+
+  if (_openId === id) {
+    _openId = null;
+    return;
+  }
+
+  _openId = id;
+  var body = document.getElementById('body-' + id);
+  var card = document.getElementById('card-' + id);
+  if (body) body.style.display = 'block';
+  if (card) {
+    var ch = card.querySelector('.chevron');
+    if (ch) ch.style.transform = 'rotate(180deg)';
+  }
+  renderChat(id);
+}
+
+function refreshCard(id) {
+  var app = APPS[id];
+  if (!app) return;
+
+  // フィルターをリセット
+  currentFilter = 'all';
+  document.querySelectorAll('.ftab').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.filter === 'all');
+  });
+
+  _openId = id;
+  renderSummary();
+  renderApps();
+}
+
+function resetFilterToAll() {
+  currentFilter = 'all';
+  document.querySelectorAll('.ftab').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.filter === 'all');
+  });
+}
+
+function renderAll() { renderSummary(); renderApps(); }
+
+function nowTime() {
+  var d = new Date();
+  return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')
+    +' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function nowDate() {
+  var d = new Date();
+  return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0');
+}
+
+async function loadStoredApps() {
+  // 古いデータを全消し
+  try {
+    Object.keys(localStorage).forEach(function(k) {
+      if (k.startsWith('mare_apply_') || k === 'mare_apply_keys') localStorage.removeItem(k);
+    });
+  } catch(e) {}
+  // サンプルを追加
+  APPS['A001'] = JSON.parse(JSON.stringify(SAMPLE));
+}
+
+async function init() {
+  var savedUser = loadUserFromStorage();
+  var savedRole = (savedUser && savedUser.role) || localStorage.getItem('mare_role') || 'seeker';
+  currentRole = ['seeker','owner','admin','both'].includes(savedRole) ? savedRole : 'seeker';
+  if (currentRole === 'both') currentRole = 'seeker';
+
+  applyRoleUI(currentRole);
+  setupFilterTabs();
+  await loadStoredApps();
+  renderAll();
+  renderNotif();
+
+  // 最初のカードを開く
+  setTimeout(function() {
+    var first = Object.values(APPS)[0];
+    if (first) {
+      _openId = first.id;
+      renderApps();
+    }
+  }, 100);
+}
+
+init();
+
+</script>
+</body>
+</html>
