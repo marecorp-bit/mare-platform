@@ -414,8 +414,8 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
           <div class="owner-label">設備情報（初期掲載用）</div>
 
           <div class="field">
-            <div class="field-label">設備名・型番</div>
-            <input type="text" placeholder="例：200t 油圧プレス機 AP-200T">
+            <div class="field-label">設備名 <span style="font-size:.7rem;font-weight:400;color:rgba(255,255,255,.5)">（型番・年式は分かれば記載）</span></div>
+            <input type="text" placeholder="例：油圧プレス機（型番・年式が不明でも登録できます）">
           </div>
 
           <div class="field-row">
@@ -432,10 +432,7 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
                 <option>その他</option>
               </select>
             </div>
-            <div class="field">
-              <div class="field-label">月額賃借料（税抜）</div>
-              <input type="text" placeholder="例：¥280,000">
-            </div>
+            
           </div>
 
           <div class="field">
@@ -523,7 +520,7 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
         <strong>利用規約（抜粋）</strong><br><br>
         第1条（目的）本規約は、MARE Inc.（以下「当社」）が提供するMAREプラットフォーム（以下「本サービス」）の利用条件を定めるものです。<br><br>
         第2条（登録）利用者は本規約に同意の上、所定の手続きにより登録申請を行うものとします。当社は審査の結果によっては登録をお断りする場合があります。<br><br>
-        第3条（手数料）マッチング成立時、賃借料の10%を設備オーナーより手数料として頂戴します。人材派遣成立時は派遣費の15%を申し受けます。<br><br>
+        第3条（手数料）マッチング成立時、契約料の10%を設備オーナーより手数料として頂戴します。<br><br>
         第4条（禁止事項）本サービスを利用して違法行為、虚偽情報の掲載、当社の信頼を損なう行為を行ってはなりません。<br><br>
         第5条（免責）当社は設備の品質・性能について保証しません。利用者間のトラブルは当事者間で解決するものとします。<br><br>
         第6条（個人情報）当社は取得した個人情報をプライバシーポリシーに従い適切に管理します。
@@ -646,8 +643,7 @@ function validateStep3() {
 }
 
 function validateStep4() {
-  const ok = document.getElementById('termsAgree').checked &&
-             document.getElementById('ageCheck').checked;
+  const ok = document.getElementById('termsAgree').checked;
   document.getElementById('step4Submit').disabled = !ok;
 }
 

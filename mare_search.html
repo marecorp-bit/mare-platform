@@ -350,7 +350,7 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
     </div>
 
     <div class="filter-section">
-      <div class="filter-title">月額賃借料</div>
+      <div class="filter-title">契約料（目安）</div>
       <div class="range-labels">
         <span>¥0</span><span id="priceMaxLabel">¥600万</span>
       </div>
@@ -392,7 +392,7 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
       <div class="check-list">
         <label class="check-item">
           <input type="checkbox" id="talentFilter" onchange="applyFilters()">
-          <label>人材派遣あり</label>
+          <label>OEM対応可</label>
         </label>
         <label class="check-item">
           <input type="checkbox" id="manualFilter" onchange="applyFilters()">
@@ -412,8 +412,8 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
         <span class="sort-label">並び替え</span>
         <select class="sort-select" id="sortSelect" onchange="applyFilters()">
           <option value="new">新着順</option>
-          <option value="price-asc">賃借料 安い順</option>
-          <option value="price-desc">賃借料 高い順</option>
+          <option value="price-asc">契約料 安い順</option>
+          <option value="price-desc">契約料 高い順</option>
         </select>
       </div>
     </div>
@@ -447,7 +447,7 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
       <div class="modal-maker" id="modalMaker"></div>
       <div class="modal-grid">
         <div class="modal-info-block">
-          <div class="modal-info-label">月額賃借料</div>
+          <div class="modal-info-label">契約料（目安）</div>
           <div class="modal-info-val accent" id="modalPrice"></div>
         </div>
         <div class="modal-info-block">
@@ -644,7 +644,7 @@ function openModal(id) {
   document.getElementById('modalDesc').textContent   = e.desc;
   document.getElementById('modalTags').innerHTML =
     `<span class="modal-tag">${catLabel(e.cat)}</span>` +
-    (e.talent ? '<span class="modal-tag">人材派遣あり</span>' : '') +
+    (e.talent ? '<span class="modal-tag">OEM対応可</span>' : '') +
     (e.manual ? '<span class="modal-tag">マニュアル完備</span>' : '');
   document.getElementById('modalSpecs').innerHTML =
     e.specs.map(s=>`<span class="spec-tag">${s}</span>`).join('');

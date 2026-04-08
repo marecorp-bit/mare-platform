@@ -437,9 +437,9 @@ const SAMPLE = {
   status:'applying', appliedAt:'2025.03.14', signed:false,
   estimate:{
     rows:[
-      {label:'月額賃借料',val:'¥280,000'},
-      {label:'人材派遣費（オペレーター1名）',val:'¥80,000 / 月'},
-      {label:'搬入費用（初回のみ）',val:'¥35,000'},
+      {label:'契約料',val:'¥280,000'},
+      
+      
       {label:'貸出期間',val:'2025.04〜2025.12（9か月）'},
     ],
     total:'¥360,000 / 月'
@@ -487,7 +487,7 @@ function buildApplying(app) {
         <div class="equip-detail-name">${app.name}</div>
         <div class="equip-detail-maker">${app.maker}</div>
         <div class="spec-tags">${specTags}</div>
-        <div class="detail-row"><span class="detail-lbl">賃借料</span><span style="color:var(--accent);font-weight:700">${app.price}/月</span></div>
+        <div class="detail-row"><span class="detail-lbl">契約料</span><span style="color:var(--accent);font-weight:700">${app.price}/月</span></div>
         <div class="detail-row"><span class="detail-lbl">期間</span><span>${app.period}</span></div>
         <div class="detail-row"><span class="detail-lbl">エリア</span><span>${app.area||'—'}</span></div>
       </div>
@@ -513,7 +513,7 @@ function buildEstimating(app) {
     <div class="est-head">📋 見積もり内容 — MARE担当 / 田中</div>
     <div class="est-body">
       <div class="est-rows">${app.estimate.rows.map(function(r){return '<div class="est-row"><span class="est-lbl">'+r.label+'</span><span>'+r.val+'</span></div>';}).join('')}</div>
-      <div class="est-total"><span class="est-total-lbl">月額合計（初月除く）</span><span class="est-total-val">${app.estimate.total}</span></div>
+      <div class="est-total"><span class="est-total-lbl">契約料合計</span><span class="est-total-val">${app.estimate.total}</span></div>
     </div>
   </div>
   <div class="stage-area">
@@ -653,7 +653,7 @@ function buildContracted(app) {
     <div class="sc-label" style="color:var(--s-contracted)">▶ STEP 4 — 契約済 / 稼働準備中</div>
     <div class="chat-wrap">${buildChatHTML(app.id)}</div>
     <div style="margin-top:16px;padding:14px;background:rgba(24,95,165,.1);border:1px solid rgba(24,95,165,.28)">
-      <p style="font-size:.82rem;line-height:1.8">電子署名が完了しました。MARE担当者が搬入・人材派遣の日程を調整中です。稼働開始日が確定次第チャットでご連絡します。</p>
+      <p style="font-size:.82rem;line-height:1.8">電子署名が完了しました。MARE担当者が搬入・OEM契約の手続きを進めて中です。稼働開始日が確定次第チャットでご連絡します。</p>
     </div>
   </div>`;
 }
@@ -828,7 +828,7 @@ function confirmSign() {
   APPS[id].status      = 'contracted';
   const label = co + ' / ' + nm;
   addMsg(id, {type:'status', text:`電子署名が完了しました（${label}）。ステータスが「契約済」に変わりました`, time:nowTime()});
-  addMsg(id, {type:'mare', from:'MARE担当 / 田中', text:'電子署名を確認しました。設備の搬入・人材派遣の日程を調整します。稼働開始日が確定次第ご連絡します。', time:nowTime()});
+  addMsg(id, {type:'mare', from:'MARE担当 / 田中', text:'電子署名を確認しました。設備の搬入・OEM契約の手続きを進めてします。稼働開始日が確定次第ご連絡します。', time:nowTime()});
   document.getElementById('contractBadge').style.display = '';
   document.getElementById('contractBadge').textContent = '1';
   refreshCard(id);
