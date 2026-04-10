@@ -153,9 +153,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 52px
 .conf-val.accent{color:var(--accent);font-family:'Space Mono',monospace;}
 
 /* BUTTONS */
-.btn-primary{width:100%;padding:15px;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:background .2s;margin-top:8px;}
+.btn-primary{width:100%;padding:15px;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:background .2s;margin-top:8px;}
 .btn-primary:hover{background:var(--accent2);}
-.btn-primary:disabled{background:var(--steel);color:var(--gray);cursor:not-allowed;clip-path:none;}
+.btn-primary:disabled{background:var(--steel);color:var(--gray);cursor:not-allowed;}
 .btn-secondary{width:100%;padding:13px;background:transparent;border:1px solid var(--border);color:var(--gray);font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:10px;}
 .btn-secondary:hover{border-color:var(--border-a);color:var(--accent);}
 
@@ -168,7 +168,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 52px
 .complete-desc{font-size:.88rem;color:var(--gray);line-height:1.85;margin-bottom:32px;}
 .complete-next{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto;}
 .btn-link{display:block;padding:13px;text-align:center;font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .2s;}
-.btn-link.primary{background:var(--accent);color:var(--navy);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.btn-link.primary{background:var(--accent);color:var(--navy);}
 .btn-link.primary:hover{background:var(--accent2);}
 .btn-link.outline{border:1px solid var(--border);color:var(--gray);}
 .btn-link.outline:hover{border-color:var(--border-a);color:var(--accent);}
@@ -200,11 +200,9 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
 .nav-cta:visited { color: var(--navy) !important; text-decoration: none !important; }
 
 </style>
-
-  <!-- Supabase設定 -->
   <script>
-    window.SUPABASE_URL  = 'https://krozenkyjdicvmwqhufd.supabase.co';
-    window.SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3plbmt5amRpY3Ztd3FodWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyOTIxMjUsImV4cCI6MjA5MDg2ODEyNX0.ZNPNpZNxLjndt5LMpMmnwznmTbhZVYHREzBlQ3shpiE';
+    window.SUPABASE_URL="https://krozenkyjdicvmwqhufd.supabase.co";
+    window.SUPABASE_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3plbmt5amRpY3Ztd3FodWZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyOTIxMjUsImV4cCI6MjA5MDg2ODEyNX0.ZNPNpZNxLjndt5LMpMmnwznmTbhZVYHREzBlQ3shpiE";
   </script>
 </head>
 <body>
@@ -246,7 +244,6 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
       <div class="benefit-card">
         <div class="benefit-icon">👷</div>
         <div class="benefit-text">
-          <h4>人材派遣もワンストップで</h4>
           <p>設備操作に精通した技術者・オペレーターも同時に手配できます。</p>
         </div>
       </div>
@@ -414,7 +411,7 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
           <div class="owner-label">設備情報（初期掲載用）</div>
 
           <div class="field">
-            <div class="field-label">設備名 <span style="font-size:.7rem;font-weight:400;color:rgba(255,255,255,.5)">（型番・年式は分かれば記載）</span></div>
+            <div class="field-label">設備名 <span style="font-size:.72rem;font-weight:400;color:rgba(255,255,255,.4)">（型番・年式は分かれば記載）</span></div>
             <input type="text" placeholder="例：油圧プレス機（型番・年式が不明でも登録できます）">
           </div>
 
@@ -432,7 +429,6 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
                 <option>その他</option>
               </select>
             </div>
-            
           </div>
 
           <div class="field">
@@ -446,15 +442,6 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
             <div class="upload-preview" id="photoPreview"></div>
           </div>
 
-          <div class="field">
-            <div class="field-label">人材派遣の提供</div>
-            <select>
-              <option value="">選択してください</option>
-              <option value="yes">提供できる</option>
-              <option value="no">提供できない</option>
-              <option value="discuss">要相談</option>
-            </select>
-          </div>
         </div>
       </div>
 
@@ -513,32 +500,34 @@ a:link, a:visited, a:hover, a:active { text-decoration: none; }
         <h2>登録内容を確認してください</h2>
         <p>内容を確認の上、利用規約に同意して登録を完了してください。</p>
       </div>
-
       <div class="confirm-table" id="confirmTable"></div>
-
       <div class="terms-box">
         <strong>利用規約（抜粋）</strong><br><br>
-        第1条（目的）本規約は、MARE Inc.（以下「当社」）が提供するMAREプラットフォーム（以下「本サービス」）の利用条件を定めるものです。<br><br>
-        第2条（登録）利用者は本規約に同意の上、所定の手続きにより登録申請を行うものとします。当社は審査の結果によっては登録をお断りする場合があります。<br><br>
-        第3条（手数料）マッチング成立時、契約料の10%を設備オーナーより手数料として頂戴します。<br><br>
-        第4条（禁止事項）本サービスを利用して違法行為、虚偽情報の掲載、当社の信頼を損なう行為を行ってはなりません。<br><br>
-        第5条（免責）当社は設備の品質・性能について保証しません。利用者間のトラブルは当事者間で解決するものとします。<br><br>
-        第6条（個人情報）当社は取得した個人情報をプライバシーポリシーに従い適切に管理します。
+        第1条（目的）本規約はMAREプラットフォームの利用条件を定めるものです。<br><br>
+        第2条（登録）利用者は本規約に同意の上、登録申請を行うものとします。<br><br>
+        第3条（手数料）OEMマッチング成立時、契約料の10%を設備オーナーより手数料として頂戴します。<br><br>
+        第4条（禁止事項）違法行為、虚偽情報の掲載を行ってはなりません。<br><br>
+        第5条（免責）当社は設備の品質・性能について保証しません。<br><br>
+        第6条（個人情報）取得した個人情報をプライバシーポリシーに従い管理します。
       </div>
-
-      <label class="terms-check" style="margin-bottom:10px">
-        <input type="checkbox" id="termsAgree" onchange="validateStep4()">
-        <label for="termsAgree"><a href="#">利用規約</a>および<a href="#">プライバシーポリシー</a>に同意する <span style="color:var(--accent)">*</span></label>
-      </label>
-      <label class="terms-check" style="margin-bottom:24px">
-        <input type="checkbox" id="ageCheck" onchange="validateStep4()">
-        <label for="ageCheck">本登録に関して権限を持つ担当者として、正確な情報を入力しました <span style="color:var(--accent)">*</span></label>
-      </label>
-
-      <div style="display:flex;gap:10px;flex-direction:column">
-        <button class="btn-primary" id="step4Submit" onclick="submitForm()" disabled>登録を完了する →</button>
-        <button class="btn-secondary" onclick="goStep(3)">← 戻る</button>
-      </div>
+      <p style="margin-bottom:8px">
+        <input type="checkbox" id="termsAgree" onchange="validateStep4()" style="margin-right:8px;width:16px;height:16px;accent-color:var(--accent);vertical-align:middle">
+        <label for="termsAgree" style="font-size:.82rem;color:var(--gray);cursor:pointer">
+          <a href="#" style="color:var(--accent)">利用規約</a>および<a href="#" style="color:var(--accent)">プライバシーポリシー</a>に同意する <span style="color:var(--accent)">*</span>
+        </label>
+      </p>
+      <p style="margin-bottom:24px">
+        <input type="checkbox" id="ageCheck" onchange="validateStep4()" style="margin-right:8px;width:16px;height:16px;accent-color:var(--accent);vertical-align:middle">
+        <label for="ageCheck" style="font-size:.82rem;color:var(--gray);cursor:pointer">
+          本登録に関して権限を持つ担当者として、正確な情報を入力しました <span style="color:var(--accent)">*</span>
+        </label>
+      </p>
+      <p style="margin-bottom:8px">
+        <button style="width:100%;padding:15px;background:var(--accent);color:var(--navy);font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:background .2s;margin-top:8px" id="step4Submit" onclick="submitForm()">登録を完了する →</button>
+      </p>
+      <p>
+        <button style="width:100%;padding:13px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.55);font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:4px" onclick="goStep(3)">← 戻る</button>
+      </p>
     </div>
 
     <!-- COMPLETE -->
@@ -643,8 +632,14 @@ function validateStep3() {
 }
 
 function validateStep4() {
-  const ok = document.getElementById('termsAgree').checked;
-  document.getElementById('step4Submit').disabled = !ok;
+  var t1 = document.getElementById('termsAgree');
+  var t2 = document.getElementById('ageCheck');
+  var ok = (t1 && t1.checked) && (!t2 || t2.checked);
+  var btn = document.getElementById('step4Submit');
+  if (btn) {
+    btn.style.opacity = ok ? '1' : '0.5';
+    btn.style.cursor  = ok ? 'pointer' : 'not-allowed';
+  }
 }
 
 // ── パスワード強度 ────────────────────────────────────
@@ -705,93 +700,79 @@ function previewPhotos(input) {
 
 // ── 送信 ─────────────────────────────────────────────
 function submitForm() {
-  const role       = currentPurpose === 'owner' ? 'owner' : currentPurpose === 'both' ? 'both' : 'seeker';
-  const email      = (document.getElementById('email')?.value || '').trim();
-  const password   = document.getElementById('password')?.value || '';
-  const company    = (document.getElementById('companyName')?.value || '').trim();
-  const lastName   = (document.getElementById('lastName')?.value  || '').trim();
-  const firstName  = (document.getElementById('firstName')?.value || '').trim();
-  const phone      = (document.getElementById('phone')?.value     || '').trim();
-  const industry   = document.getElementById('industry')?.value   || '';
-  const employees  = document.getElementById('employees')?.value  || '';
-  const prefecture = document.getElementById('prefecture')?.value || '';
-
-  // localStorageに保存
   try {
-    localStorage.setItem('mare_user', JSON.stringify({
-      role, email, company, registeredAt: new Date().toISOString(), loggedIn: true
-    }));
+  // チェックボックス確認
+  var t1 = document.getElementById('termsAgree');
+  var t2 = document.getElementById('ageCheck');
+  if (t1 && !t1.checked) {
+    alert('利用規約への同意が必要です。');
+    return;
+  }
+  if (t2 && !t2.checked) {
+    alert('担当者確認のチェックが必要です。');
+    return;
+  }
+  var role       = (typeof selectedPurpose !== 'undefined' && selectedPurpose) ? (selectedPurpose === 'owner' ? 'owner' : selectedPurpose === 'both' ? 'both' : 'seeker') : 'seeker';
+  var email      = (document.getElementById('email') ? document.getElementById('email').value : '').trim();
+  var password   = document.getElementById('password') ? document.getElementById('password').value : '';
+  var company    = (document.getElementById('companyName') ? document.getElementById('companyName').value : '').trim();
+  var lastName   = (document.getElementById('lastName') ? document.getElementById('lastName').value : '').trim();
+  var firstName  = (document.getElementById('firstName') ? document.getElementById('firstName').value : '').trim();
+  var phone      = (document.getElementById('phone') ? document.getElementById('phone').value : '').trim();
+  var industry   = document.getElementById('industry') ? document.getElementById('industry').value : '';
+  var employees  = document.getElementById('employees') ? document.getElementById('employees').value : '';
+  var prefecture = document.getElementById('prefecture') ? document.getElementById('prefecture').value : '';
+
+  try {
+    localStorage.setItem('mare_user', JSON.stringify({role:role,email:email,company:company,registeredAt:new Date().toISOString(),loggedIn:true}));
     localStorage.setItem('mare_role', role);
     localStorage.setItem('mare_logged_in', 'true');
   } catch(e) {}
 
-  // Supabaseに送信
-  sendToSupabase({ role, email, password, company, lastName, firstName, phone, industry, employees, prefecture });
+  // 完了画面を表示
+  for (var i = 1; i <= TOTAL_STEPS; i++) {
+    var s = document.getElementById('step' + i);
+    if (s) { s.classList.remove('active'); s.style.display = 'none'; }
+  }
+  var si = document.getElementById('stepIndicator');
+  var pb = document.querySelector('.progress-bar');
+  if (si) si.style.display = 'none';
+  if (pb) pb.style.display = 'none';
+  // 完了ページへリダイレクト
+  window.location.href = 'mare_register_complete.html';
+
+  // Supabaseへバックグラウンド送信
+  sendToSupabase(role, email, password, company, lastName, firstName, phone, industry, employees, prefecture);
+  } catch(err) {
+    alert('エラーが発生しました: ' + err.message);
+  }
 }
 
-async function sendToSupabase(d) {
-  const SB_URL  = window.SUPABASE_URL;
-  const SB_ANON = window.SUPABASE_ANON;
-  if (!SB_URL || SB_URL.includes('XXXXX')) { showComplete(); return; }
-
+async function sendToSupabase(role,email,password,company,lastName,firstName,phone,industry,employees,prefecture) {
+  var SB_URL  = window.SUPABASE_URL;
+  var SB_ANON = window.SUPABASE_ANON;
+  if (!SB_URL) return;
   try {
-    // ① Supabase Authでユーザー作成（パスワードは自動でbcryptハッシュ化）
-    const authRes = await fetch(SB_URL + '/auth/v1/signup', {
+    var authRes = await fetch(SB_URL + '/auth/v1/signup', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': SB_ANON },
-      body: JSON.stringify({
-        email: d.email,
-        password: d.password,
-        options: { data: { company_name: d.company, role: d.role } }
-      })
+      headers: {'Content-Type':'application/json','apikey':SB_ANON},
+      body: JSON.stringify({email:email,password:password,options:{data:{company_name:company,role:role}}})
     });
-    const auth = await authRes.json();
-    if (auth.error && !auth.error.message.includes('already registered')) {
-      console.warn('Auth error:', auth.error.message);
-    }
-
-    const userId = auth.user?.id;
-
-    // ② mare_usersテーブルにプロフィール保存
+    var auth = await authRes.json();
+    var userId = auth.user && auth.user.id;
     if (userId) {
       await fetch(SB_URL + '/rest/v1/mare_users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SB_ANON,
-          'Authorization': 'Bearer ' + (auth.session?.access_token || SB_ANON),
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          id: userId,
-          email: d.email,
-          company_name: d.company,
-          last_name: d.lastName,
-          first_name: d.firstName,
-          phone: d.phone,
-          industry: d.industry,
-          employees: d.employees,
-          prefecture: d.prefecture,
-          oem_role: d.role,
-          business_type: 'oem',
-          status: 'pending'
-        })
+        headers: {'Content-Type':'application/json','apikey':SB_ANON,
+          'Authorization':'Bearer '+(auth.session?auth.session.access_token:SB_ANON),
+          'Prefer':'return=minimal'},
+        body: JSON.stringify({id:userId,email:email,company_name:company,
+          last_name:lastName,first_name:firstName,phone:phone,
+          industry:industry,employees:employees,prefecture:prefecture,
+          oem_role:role,business_type:'oem',status:'pending'})
       });
     }
-  } catch(e) {
-    console.warn('Supabase送信エラー（ローカル保存のみ）:', e);
-  }
-
-  showComplete();
-}
-
-function showComplete() {
-  for (let i = 1; i <= TOTAL_STEPS; i++) {
-    document.getElementById('step' + i).classList.remove('active');
-  }
-  document.getElementById('stepIndicator').style.display = 'none';
-  document.querySelector('.progress-bar').style.display = 'none';
-  document.getElementById('completeScreen').classList.add('show');
+  } catch(e) { console.warn('Supabase error:', e); }
 }
 </script>
 </body>
