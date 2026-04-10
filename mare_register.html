@@ -699,7 +699,7 @@ function previewPhotos(input) {
 }
 
 // ── 送信 ─────────────────────────────────────────────
-function submitForm() {
+async function submitForm() {
   try {
   // チェックボックス確認
   var t1 = document.getElementById('termsAgree');
@@ -738,11 +738,10 @@ function submitForm() {
   var pb = document.querySelector('.progress-bar');
   if (si) si.style.display = 'none';
   if (pb) pb.style.display = 'none';
-  // 完了ページへリダイレクト
+  // Supabaseへ送信してからリダイレクト
+  await sendToSupabase(role, email, password, company, lastName, firstName, phone, industry, employees, prefecture);
+  // 完了ページへ遷移
   window.location.href = 'mare_register_complete.html';
-
-  // Supabaseへバックグラウンド送信
-  sendToSupabase(role, email, password, company, lastName, firstName, phone, industry, employees, prefecture);
   } catch(err) {
     alert('エラーが発生しました: ' + err.message);
   }
@@ -751,28 +750,53 @@ function submitForm() {
 async function sendToSupabase(role,email,password,company,lastName,firstName,phone,industry,employees,prefecture) {
   var SB_URL  = window.SUPABASE_URL;
   var SB_ANON = window.SUPABASE_ANON;
-  if (!SB_URL) return;
+  if (!SB_URL || SB_URL.indexOf('XXXXX') >= 0) return;
   try {
+    // ① Auth でユーザー作成（パスワードはbcryptで自動ハッシュ化）
     var authRes = await fetch(SB_URL + '/auth/v1/signup', {
       method: 'POST',
       headers: {'Content-Type':'application/json','apikey':SB_ANON},
-      body: JSON.stringify({email:email,password:password,options:{data:{company_name:company,role:role}}})
+      body: JSON.stringify({
+        email: email,
+        password: password || 'TempPass' + Date.now(),
+        options: {data: {company_name: company, role: role}}
+      })
     });
     var auth = await authRes.json();
     var userId = auth.user && auth.user.id;
-    if (userId) {
-      await fetch(SB_URL + '/rest/v1/mare_users', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json','apikey':SB_ANON,
-          'Authorization':'Bearer '+(auth.session?auth.session.access_token:SB_ANON),
-          'Prefer':'return=minimal'},
-        body: JSON.stringify({id:userId,email:email,company_name:company,
-          last_name:lastName,first_name:firstName,phone:phone,
-          industry:industry,employees:employees,prefecture:prefecture,
-          oem_role:role,business_type:'oem',status:'pending'})
-      });
-    }
-  } catch(e) { console.warn('Supabase error:', e); }
+    var token  = auth.session && auth.session.access_token ? auth.session.access_token : SB_ANON;
+
+    // ② mare_users テーブルに登録情報を保存
+    var userData = {
+      email:        email,
+      company_name: company,
+      last_name:    lastName,
+      first_name:   firstName,
+      phone:        phone,
+      industry:     industry,
+      employees:    employees,
+      prefecture:   prefecture,
+      oem_role:     role,
+      business_type:'oem',
+      status:       'pending'
+    };
+    if (userId) userData.id = userId;
+
+    // upsert（既存メールでも上書き更新）
+    var insertRes = await fetch(SB_URL + '/rest/v1/mare_users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey':        SB_ANON,
+        'Authorization': 'Bearer ' + token,
+        'Prefer':        'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify(userData)
+    });
+    console.log('Supabase insert status:', insertRes.status);
+  } catch(e) {
+    console.warn('Supabase error:', e);
+  }
 }
 </script>
 </body>
