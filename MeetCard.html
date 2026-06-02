@@ -858,9 +858,10 @@ html, body {
 </div><!-- end app -->
 
 <!-- ===== LOADING OVERLAY ===== -->
-<div id="loading-overlay">
+<div id="loading-overlay" title="タップして閉じる（緊急時）">
   <div class="spinner"></div>
   <div class="loading-text" id="loading-text">処理中...</div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:8px;">長時間動かない場合はタップしてください</div>
 </div>
 
 <!-- ===== SUCCESS TOAST ===== -->
@@ -1089,6 +1090,8 @@ function showLoading(text='処理中...') {
 function hideLoading() {
   document.getElementById('loading-overlay').classList.remove('active');
 }
+// 緊急タップで強制クローズ
+document.getElementById('loading-overlay').addEventListener('click', hideLoading);
 
 function showToast(msg) {
   const t = document.getElementById('success-toast');
@@ -1150,16 +1153,24 @@ async function callClaude(messages, systemPrompt='') {
   };
   if (systemPrompt) body.system = systemPrompt;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify(body),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000);
+  let res;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err?.error?.message || `APIエラー: ${res.status}`);
@@ -1188,16 +1199,24 @@ async function runOCR(imageBase64, mimeType) {
       ]
     }]
   };
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify(body),
-  });
+  const ocrController = new AbortController();
+  const ocrTimeout = setTimeout(() => ocrController.abort(), 60000);
+  let res;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify(body),
+      signal: ocrController.signal,
+    });
+  } finally {
+    clearTimeout(ocrTimeout);
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err?.error?.message || `OCRエラー: ${res.status}`);
@@ -1514,20 +1533,30 @@ let recTimerInterval = null;
 let recTranscript = '';
 let recInterim = '';
 let recActive = false;
+let recRestartCount = 0;
+const REC_MAX_RESTARTS = 60; // ~1時間上限
 
 function buildTranscriptHTML() {
   return (recTranscript ? `<span>${escapeHtml(recTranscript)}</span>` : '') +
     (recInterim ? `<span class="interim"> ${escapeHtml(recInterim)}</span>` : '');
 }
 
+function _killRecognition() {
+  if (recognition) {
+    try { recognition.onend = null; recognition.onerror = null; recognition.onresult = null; recognition.stop(); } catch(e) {}
+    recognition = null;
+  }
+}
+
 function startRecording() {
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('お使いのブラウザは音声認識に対応していません。Chrome/Safariをお試しください。');
+    alert('お使いのブラウザは音声認識に対応していません。iOSはSafari、AndroidはChromeをお試しください。');
     return;
   }
   recActive = true;
   recTranscript = '';
   recInterim = '';
+  recRestartCount = 0;
   document.getElementById('rec-box').innerHTML = '';
   document.getElementById('rec-char-count').style.display = 'none';
   document.getElementById('btn-copy-transcript').style.display = 'none';
@@ -1538,64 +1567,90 @@ function startRecording() {
   recStartTime = Date.now();
   recTimerInterval = setInterval(updateRecTimer, 1000);
   updateRecTimer();
-  startSpeechRecognition();
+  _startSpeechRecognition();
 }
 
 function updateRecTimer() {
   const secs = Math.floor((Date.now() - recStartTime) / 1000);
   const m = Math.floor(secs / 60);
   const s = secs % 60;
-  document.getElementById('rec-timer').textContent = `録音中 ${m}:${String(s).padStart(2,'0')}`;
-  document.getElementById('rec-status-text').textContent = '音声認識中...';
+  const el = document.getElementById('rec-timer');
+  if (el) el.textContent = `録音中 ${m}:${String(s).padStart(2,'0')}`;
+  const st = document.getElementById('rec-status-text');
+  if (st) st.textContent = '音声認識中...';
 }
 
-function startSpeechRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-  recognition.lang = 'ja-JP';
-  recognition.continuous = true;
-  recognition.interimResults = true;
+function _startSpeechRecognition() {
+  if (!recActive) return;
+  _killRecognition(); // 前のインスタンスを確実に破棄
 
-  recognition.onresult = (e) => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SpeechRecognition();
+  rec.lang = 'ja-JP';
+  rec.continuous = true;
+  rec.interimResults = true;
+  recognition = rec;
+
+  rec.onresult = (e) => {
     recInterim = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const t = e.results[i].transcript;
-      if (e.results[i].isFinal) {
-        recTranscript += t;
-      } else {
-        recInterim += t;
-      }
+      if (e.results[i].isFinal) { recTranscript += t; }
+      else { recInterim += t; }
     }
-    document.getElementById('rec-box').innerHTML = buildTranscriptHTML();
+    const box = document.getElementById('rec-box');
+    if (box) box.innerHTML = buildTranscriptHTML();
   };
 
-  recognition.onend = () => {
-    if (recActive) {
-      // Auto-restart
-      try { recognition.start(); } catch(e) {}
+  rec.onend = () => {
+    if (!recActive) return; // stopRecording() 済み→何もしない
+    recRestartCount++;
+    if (recRestartCount > REC_MAX_RESTARTS) {
+      stopRecording();
+      showToast('録音を自動停止しました（上限に達しました）');
+      return;
     }
+    // 300ms待ってから新しいインスタンスで再起動（iOS Safariでの直接restart回避）
+    setTimeout(() => { if (recActive) _startSpeechRecognition(); }, 300);
   };
 
-  recognition.onerror = (e) => {
-    if (e.error === 'no-speech') return;
-    if (e.error === 'aborted') return;
-    console.warn('Speech error:', e.error);
+  rec.onerror = (e) => {
+    if (e.error === 'no-speech') return;    // 無音→自動再起動で継続
+    if (e.error === 'aborted') return;      // stop()呼び出しによる正常終了
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      stopRecording();
+      alert('マイクの使用が許可されていません。\nブラウザのアドレスバー付近の🎤アイコン、またはシステム設定でマイクを許可してください。');
+      return;
+    }
+    // network / audio-capture など→ログのみ。onend が再起動を担当
+    console.warn('音声認識エラー:', e.error);
   };
 
-  try { recognition.start(); } catch(e) {}
+  try {
+    rec.start();
+  } catch(e) {
+    console.warn('recognition.start() 失敗:', e.message);
+    stopRecording();
+    alert('録音を開始できませんでした: ' + e.message);
+  }
 }
 
 function stopRecording() {
   recActive = false;
   clearInterval(recTimerInterval);
-  if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
-  document.getElementById('rec-indicator').classList.remove('active');
-  document.getElementById('rec-timer').style.display = 'none';
-  document.getElementById('rec-status-text').textContent = '待機中';
-  document.getElementById('btn-rec-start').style.display = '';
-  document.getElementById('btn-rec-stop').style.display = 'none';
+  _killRecognition();
+  const indic = document.getElementById('rec-indicator');
+  if (indic) indic.classList.remove('active');
+  const timer = document.getElementById('rec-timer');
+  if (timer) timer.style.display = 'none';
+  const st = document.getElementById('rec-status-text');
+  if (st) st.textContent = '待機中';
+  const startBtn = document.getElementById('btn-rec-start');
+  if (startBtn) startBtn.style.display = '';
+  const stopBtn = document.getElementById('btn-rec-stop');
+  if (stopBtn) stopBtn.style.display = 'none';
 
-  // Merge any pending interim
+  // 暫定テキストをマージ
   if (recInterim) { recTranscript += recInterim; recInterim = ''; }
   state.transcript = recTranscript;
 
